@@ -33,10 +33,7 @@ def resize_image(image, minimum_size ):
 
   return cv2.resize(rgb, dim, interpolation = cv2.INTER_AREA)
 
-def crop_face(image):
-  ''' Receives a cv2 vector image and returns an image of a single face in it
-  if none was found returns the original image '''
-
+def find_face(image):
   resized = resize_image(image, 400)
 
   # detect the (x, y)-coordinates of the bounding boxes
@@ -52,26 +49,37 @@ def crop_face(image):
       model=args["detection_method"])
     degrees = degrees + degrees_rotation
   
+  return boxes, resized
+  
+def crop_face(image):
+  ''' Receives a cv2 vector image and returns an image of a single face in it
+  if none was found returns the original image '''
+
+  boxes, resized = find_face(image)
+  
   if( boxes ) :
     bottom_y, bottom_x, floor_y, floor_x = boxes[0]
-    return resized[ bottom_y:floor_y, floor_x:bottom_x ]
+    face = resized[ bottom_y:floor_y, floor_x:bottom_x ]
+    return face
   return image
 
 
 # MAIN PARA EXEMPLO E TESTES
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--dataset", required=True,
+ap.add_argument("-db", "--database", required=True,
   help="path to input directory of faces + images")
 ap.add_argument("-e", "--encodings", required=True,
   help="path to serialized db of facial encodings")
 ap.add_argument("-d", "--detection-method", type=str, default="cnn",
   help="face detection model to use: either `hog` or `cnn`")
+ap.add_argument("-i", "--image", required=True,
+	help="path to input image")
 args = vars(ap.parse_args())
 
 # grab the paths to the input images in our dataset
 print("[INFO] quantifying faces...")
-imagePaths = list(paths.list_images(args["dataset"]))
+imagePaths = list(paths.list_images(args["database"]))
  
 # initialize the list of known encodings and known names
 knownEncodings = []
@@ -89,7 +97,81 @@ for (i, imagePath) in enumerate(imagePaths):
   # to dlib ordering (RGB)
   image = pyplot.imread(imagePath)
   rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+  boxes, resized = find_face(rgb)
   face = crop_face(rgb)
-  if (face != []):
-    cv2.imshow("Face", face)
-    cv2.waitKey(0)
+
+  # compute the facial embedding for the face
+  encodings = face_recognition.face_encodings(face, boxes)
+  
+  # loop over the encodings
+  for encoding in encodings:
+    # add each encoding + name to our set of known names and
+    # encodings
+    knownEncodings.append(encoding)
+    knownNames.append(name)
+  # load the known faces and embeddings
+
+print("[INFO] loading encodings...")
+data = {'Names': knownNames
+        ,'Encondings': knownEncodings
+      }
+ 
+# load the input image and convert it from BGR to RGB
+print(args["image"])
+image = pyplot.imread(args["image"])
+rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+ 
+# detect the (x, y)-coordinates of the bounding boxes corresponding
+# to each face in the input image, then compute the facial embeddings
+# for each face
+print("[INFO] recognizing faces...")
+boxes, resized = find_face(rgb)
+face = crop_face(rgb)
+
+encodings = face_recognition.face_encodings(face, boxes)
+ 
+# initialize the list of names for each face detected
+names = []
+
+
+# loop over the facial embeddings
+for encoding in encodings:
+	# attempt to match each face in the input image to our known
+	# encodings
+	matches = face_recognition.compare_faces(knownEncodings,
+		encoding)
+	name = "Unknown"
+
+# check to see if we have found a match
+	if True in matches:
+		# find the indexes of all matched faces then initialize a
+		# dictionary to count the total number of times each face
+		# was matched
+		matchedIdxs = [i for (i, b) in enumerate(matches) if b]
+		counts = {}
+ 
+		# loop over the matched indexes and maintain a count for
+		# each recognized face face
+		for i in matchedIdxs:
+			name = knownNames[i]
+			counts[name] = counts.get(name, 0) + 1
+ 
+		# determine the recognized face with the largest number of
+		# votes (note: in the event of an unlikely tie Python will
+		# select first entry in the dictionary)
+		name = max(counts, key=counts.get)
+	
+	# update the list of names
+	names.append(name)
+
+# loop over the recognized faces
+for ((top, right, bottom, left), name) in zip(boxes, names):
+	# draw the predicted face name on the image
+	cv2.rectangle(resized, (left, top), (right, bottom), (0, 255, 0), 2)
+	y = top - 15 if top - 15 > 15 else top + 15
+	cv2.putText(resized, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX,
+		0.75, (0, 255, 0), 2)
+ 
+# show the output image
+cv2.imshow("Image", resized)
+cv2.waitKey(0)
