@@ -45,7 +45,7 @@ for (i, imagePath) in enumerate(imagePaths):
   face = crop_face(rgb)
 
   # compute the facial embedding for the face
-  encodings = face_recognition.face_encodings(face, boxes)
+  encodings = face_recognition.face_encodings(face, boxes, 5)
   
   # loop over the encodings
   for encoding in encodings:
