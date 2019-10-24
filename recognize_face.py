@@ -38,7 +38,7 @@ encodings = face_recognition.face_encodings(face, boxes)
 person_names = []
 person_encodings = []
 
-person_encodingsIdxs = [i for (i, b) in enumerate(data["names"]) if b == "thiago"]
+person_encodingsIdxs = [i for (i, b) in enumerate(data["names"]) if b == "rodrigo"]
 for i in person_encodingsIdxs:
   person_encodings.append(data["encodings"][i])
   person_names.append(data["names"][i])
@@ -47,7 +47,7 @@ for i in person_encodingsIdxs:
 for encoding in encodings:
   # attempt to match each face in the input image to our known
   # encodings
-  matches = face_recognition.compare_faces(person_encodings, encoding)
+  matches = face_recognition.compare_faces(person_encodings, encoding, 0.1)
   
   if True in matches:
     # loop over the recognized faces
