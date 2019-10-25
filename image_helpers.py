@@ -3,6 +3,8 @@
 # Last edit: 10/23/2019
 import cv2
 import face_recognition
+from matplotlib import pyplot
+
 
 
 def rotate_image(image, degrees):
@@ -60,5 +62,15 @@ def crop_face(image):
     return face
   return image
 
+
+def crop_and_resize_face(filename):
+# load image from file
+  pixels = pyplot.imread(filename)
+  image = cv2.cvtColor(pixels, cv2.COLOR_BGR2RGB)
+  face = crop_face(image)
+  face = cv2.resize(face, (224, 224))
+
+
+  return face
 
 
