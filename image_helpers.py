@@ -78,7 +78,7 @@ def crop_face(image):
   return image
 
 
-def crop_and_resize_face(filename):
+def open_crop_and_resize_face(filename):
 # load image from file
   pixels = open_image_canon_position(filename)
   # Covert to RGB and also to an array that can be interpreted by openCV

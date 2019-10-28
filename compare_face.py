@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Código desenvolvido para converter uma database de imagens em códigos de incorporações
-que depois podem ser comparados a fim de validar se um rosto pertence a uma pessoa 
-ou não.
+Código desenvolvido para comparar uma imagem de um rosto( o nome do arquivo deve ser o nome da pessoa)
+com uma database já convertida em código de incorporação
+e valida se é a mesma pessoa ou não.
 
 @Autor: rodrigo.ferrari
 @Editor: Thiago Luis Pinho
 """
 
-
-import keras_vggface
-# Importa a rede neural já treinada que gera os códigos de incorporação.
-# Caso você queira saber a versão, basta descomentar o código abaixo.
-# print(keras_vggface.__version__),
 
 import os
 import argparse
@@ -31,8 +26,8 @@ from image_helpers import find_face, crop_face, open_crop_and_resize_face, rotat
 
 # Parte do código responsável por criar e configurar os argumentos para a chamada no terminal
 ap = argparse.ArgumentParser()
-ap.add_argument("-db", "--database", default="database_labeled",
-  help="path to input directory of faces + images")
+ap.add_argument("-i", "--image", default="database_test",
+  help="path to input database of unkown images")
 ap.add_argument("-e", "--encodings", default="encodings.pickle",
   help="path to serialized db of facial encodings")
 ap.add_argument("-d", "--detection-method", type=str, default="cnn",
@@ -54,7 +49,8 @@ def get_embeddings(database_folder_name,crop=True):
     print("[INFO] Processando imagem {}/{}".format(i + 1,
       len(imagePaths)))
 
-    filename = imagePath.split(os.path.sep)[-2]
+    filename = imagePath.split(os.path.sep)[-1]
+    filename = filename[:-5]
     filenames.append(filename)
     
     if crop==True:
@@ -78,21 +74,41 @@ def get_embeddings(database_folder_name,crop=True):
 
   return embeddings, filenames
 
-# Converte as imagens da database em códigos de incorporação
-embbedings, filenames = get_embeddings(args["database"])
+# determine if a candidate face is a match for a known face
+def is_match(known_embedding, candidate_embedding, thresh=0.5):
+  # calculate distance between embeddings
+  score = cosine(known_embedding, candidate_embedding)
+  if score <= thresh:
+    print('>face is a Match (%.3f <= %.3f)' % (score, thresh))
+  else:
+    print('>face is NOT a Match (%.3f > %.3f)' % (score, thresh))
 
+print("[INFO] loading encodings...")
+data = pickle.loads(open(args["encodings"], "rb").read())
 
-# Itera sobre os códigos de incorporações
-data = {}
-for embbeding, filename in zip(embbedings, filenames):
-  # Adiciona cada nome e código a listas correspondentes.
-  if filename in data:
-    data[filename].append( embbeding )
-  else: 
-    data[filename] = [embbeding]
-  
+unknown_encodings, unknown_names = get_embeddings(args["image"])
 
-# Armazena os nomes e códigos gerados
-f = open(args["encodings"], "wb")
-f.write(pickle.dumps(data))
-f.close()
+# initialize the list of names for each face detected
+person_names = []
+person_encodings = []
+
+person_encodings = data[unknown_names[0]]
+
+# loop over the facial embeddings
+for encoding in unknown_encodings:
+  # attempt to match each face in the input image to our known
+  # encodings
+  for known_encoding in person_encodings:
+      is_match(encoding, known_encoding)
+      """  
+  if True in matches:
+    # loop over the recognized faces
+    for ((top, right, bottom, left), name) in zip(boxes, person_names):
+      # draw the predicted face name on the image
+      cv2.rectangle(resized, (left, top), (right, bottom), (0, 255, 0), 2)
+      y = top - 15 if top - 15 > 15 else top + 15
+      cv2.putText(resized, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2) """
+
+# show the output image
+#cv2.imshow("Image", resized)
+#cv2.waitKey(0)

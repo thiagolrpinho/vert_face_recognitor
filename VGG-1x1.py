@@ -20,13 +20,13 @@ from keras_vggface.utils import preprocess_input
 from keras_vggface.utils import decode_predictions
 from scipy.spatial.distance import cosine
 import cv2
-from image_helpers import find_face, crop_face, crop_and_resize_face, rotate_image
+from image_helpers import find_face, crop_face, open_crop_and_resize_face, rotate_image
 
 # extract faces and calculate face embeddings for a list of photo files
 def get_embeddings(filenames,crop=True):
   if crop==True:
       # extract faces
-      faces = [crop_and_resize_face(f) for f in filenames]
+      faces = [open_crop_and_resize_face(f) for f in filenames]
   else:
       faces = [pyplot.imread(f) for f in filenames]
       for i in range(0,len(faces)):
