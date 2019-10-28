@@ -56,6 +56,7 @@ def get_embeddings(database_folder_name,crop=True):
 
     filename = imagePath.split(os.path.sep)[-2]
     filenames.append(filename)
+    
     if crop==True:
       # Se os rostos precisarem ser cortados das fotos, ele o faz.
       face = crop_and_resize_face(imagePath)
