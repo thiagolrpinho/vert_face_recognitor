@@ -1,9 +1,33 @@
 # Module created to develop auxiliary functions to deal with images
-# Modifiers: Thiago Luis
-# Last edit: 10/23/2019
+# Modifiers: Thiago Luis, Rodrigo Lassarte
+# Last edit: 2019/10/29
 import cv2
 import face_recognition
+from matplotlib import pyplot
+from PIL import Image, ExifTags
+import numpy as np
 
+def open_image_canon_position( image_name ):
+  ''' Open an image file and returns it the image in it at canon position'''
+
+  image = Image.open(image_name)
+
+  for orientation in ExifTags.TAGS.keys() :
+  # First we verify if there's the metadata needed to make know if the image is in canon position
+      if ExifTags.TAGS[orientation]=='Orientation' : break
+  if( image._getexif() ):
+    exif=dict(image._getexif().items())
+    try:
+      if exif[orientation] == 3 :
+          image=image.rotate(180, expand=True)
+      elif exif[orientation] == 6 :
+          image=image.rotate(270, expand=True)
+      elif exif[orientation] == 8 :
+          image=image.rotate(90, expand=True)
+    except KeyError:
+      print("Codificação da imagem inválida")
+
+  return image
 
 def rotate_image(image, degrees):
   # get image height, width
@@ -31,21 +55,16 @@ def resize_image(image, minimum_size ):
   return cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 
 def find_face(image):
+  ''' Receives an image in canon pose and returns 
+  the tuple boxes and the original image resized '''
   resized = resize_image(image, 400)
 
   # detect the (x, y)-coordinates of the bounding boxes
   # corresponding to each face in the input image
   boxes = []
-  degrees = 0
-  while degrees < 360 and not boxes :
-    # If none is found in a first try, it rotates the image counter clockwise
-    # till it finds a face or has rotate it entirely
-    degrees_rotation = 45
-    resized = rotate_image(resized, degrees )
-    boxes = face_recognition.face_locations(resized ,
-      model="cnn")
-    degrees = degrees + degrees_rotation
-  
+ 
+  boxes = face_recognition.face_locations(resized ,
+    model="cnn")
   return boxes, resized
   
 def crop_face(image):
@@ -60,5 +79,18 @@ def crop_face(image):
     return face
   return image
 
+
+def open_crop_and_resize_face(filename):
+# load image from file
+  pixels = open_image_canon_position(filename)
+  # Covert to RGB and also to an array that can be interpreted by openCV
+  image = cv2.cvtColor( np.array( pixels ) , cv2.COLOR_BGR2RGB)
+#  cv2.imshow("Image", image)
+#  cv2.waitKey(0)
+  face = crop_face(image)
+  face = cv2.resize(face, (224, 224))
+ 
+
+  return face
 
 
