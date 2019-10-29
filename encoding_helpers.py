@@ -1,4 +1,6 @@
 # Módulo auxiliar para gerenciar as funções relaciondas a converter imagens em códigos de incorporação
+# Modifiers: Thiago Luis
+# Last edit: 2019/10/29
 
 from imutils import paths
 import os
@@ -6,6 +8,8 @@ from image_helpers import find_face, crop_face, open_crop_and_resize_face, rotat
 from numpy import asarray
 from keras_vggface.vggface import VGGFace
 from keras_vggface.utils import preprocess_input
+from scipy.spatial.distance import cosine
+
 
 def get_embeddings( database_folder_name, crop=True ):
   ''' Recebe uma lista de nomes de arquivos para serem abertos. Caso crop = True, ele antes de calcular
@@ -45,3 +49,14 @@ def get_embeddings( database_folder_name, crop=True ):
   embeddings = model.predict(samples)
 
   return embeddings, filenames
+
+# determine if a candidate face is a match for a known face
+def is_match(known_embedding, candidate_embedding, thresh=0.5):
+  # calculate distance between embeddings as they're described as 128 dimensions coordinate
+  score = cosine(known_embedding, candidate_embedding)
+  if score <= thresh:
+    print('>face is a Match (%.3f <= %.3f)' % (score, thresh))
+    return True
+  else:
+    print('>face is NOT a Match (%.3f > %.3f)' % (score, thresh))
+    return False

@@ -1,6 +1,6 @@
 # Module created to develop auxiliary functions to deal with images
 # Modifiers: Thiago Luis, Rodrigo Lassarte
-# Last edit: 10/28/2019
+# Last edit: 2019/10/29
 import cv2
 import face_recognition
 from matplotlib import pyplot

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-Código desenvolvido para converter uma database de imagens em códigos de incorporações
-que depois podem ser comparados a fim de validar se um rosto pertence a uma pessoa 
-ou não.
 
-@Autor: rodrigo.ferrari
-@Editor: Thiago Luis Pinho
-"""
+# Código desenvolvido para converter uma database de imagens em códigos de incorporações
+# que depois podem ser comparados a fim de validar se um rosto pertence a uma pessoa 
+# ou não.
+
+# @Autor: rodrigo.ferrari
+# @Editor: Thiago Luis Pinho
+# Last edit: 2019/10/29
+
 
 
 import keras_vggface
