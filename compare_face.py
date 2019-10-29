@@ -9,20 +9,10 @@ e valida se é a mesma pessoa ou não.
 """
 
 
-import os
 import argparse
-import cv2
 import pickle
-from imutils import paths
-from numpy import expand_dims
-from matplotlib import pyplot
-from PIL import Image
-from numpy import asarray
-from keras_vggface.vggface import VGGFace
-from keras_vggface.utils import preprocess_input
-from keras_vggface.utils import decode_predictions
 from scipy.spatial.distance import cosine
-from image_helpers import find_face, crop_face, open_crop_and_resize_face, rotate_image
+from encoding_helpers import get_embeddings
 
 # Parte do código responsável por criar e configurar os argumentos para a chamada no terminal
 ap = argparse.ArgumentParser()
@@ -33,46 +23,6 @@ ap.add_argument("-e", "--encodings", default="encodings.pickle",
 ap.add_argument("-d", "--detection-method", type=str, default="cnn",
   help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
-
-def get_embeddings( database_folder_name, crop=True ):
-  ''' Recebe uma lista de nomes de arquivos para serem abertos. Caso crop = True, ele antes de calcular
-  o embedding tenta encontrar o rosto e retorna uma imagem com somente ele. 
-  Retorna uma lista de códigos de incorporação e uma lista dos nomes correspondentes desses códigos'''
-  # Pega o caminho para a database passada no argumento
-  print("[INFO] Contando rostos em " + database_folder_name + " ...")
-  imagePaths = list(paths.list_images( database_folder_name ))
-  faces = []
-  filenames = []
-  # Itera sobre os caminhos das imagens
-  for (i, imagePath) in enumerate(imagePaths):
-    # Extrai a face da pessoa na imagem, caso haja
-    print("[INFO] Processando imagem {}/{}".format(i + 1,
-      len(imagePaths)))
-
-    filename = imagePath.split(os.path.sep)[-1]
-    filename = filename[:-5]
-    filenames.append(filename)
-    
-    if crop == True:
-      # Se os rostos precisarem ser cortados das fotos, ele o faz.
-      face = open_crop_and_resize_face(imagePath)
-      faces.append(face)
-    else:
-      # Caso contrário ele somente abre e muda para o tamanho adequado.
-      face = pyplot.imread(imagePath)
-      face = cv2.resize(face, (224,224) )
-      faces.append(face)
-
-    #  Converte em um array de samples
-  samples = asarray(faces, 'float32')
-  # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
-  samples = preprocess_input(samples, version=2)
-  # Cria um modelo já treinado do VGGFace
-  model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
-  # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
-  embeddings = model.predict(samples)
-
-  return embeddings, filenames
 
 # determine if a candidate face is a match for a known face
 def is_match(known_embedding, candidate_embedding, thresh=0.5):
@@ -116,6 +66,7 @@ for unknown_person in data_unknown.keys():
       matches.append( is_match( encoding, known_encoding ) )
 
     if( matches.count(True) > len(matches)/2 ):
+      # Se mais que a metade dos rostos baterem, consideramos a pessoa como a mesma
       print( "A imagem é do " + unknown_person )
     else: 
       print( "A imagem não é do " + unknown_person )
