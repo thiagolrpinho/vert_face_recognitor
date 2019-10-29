@@ -34,7 +34,7 @@ ap.add_argument("-d", "--detection-method", type=str, default="cnn",
   help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
 
-def get_embeddings(database_folder_name,crop=True):
+def get_embeddings( database_folder_name, crop=True ):
   ''' Recebe uma lista de nomes de arquivos para serem abertos. Caso crop = True, ele antes de calcular
   o embedding tenta encontrar o rosto e retorna uma imagem com somente ele. 
   Retorna uma lista de códigos de incorporação e uma lista dos nomes correspondentes desses códigos'''
@@ -53,7 +53,7 @@ def get_embeddings(database_folder_name,crop=True):
     filename = filename[:-5]
     filenames.append(filename)
     
-    if crop==True:
+    if crop == True:
       # Se os rostos precisarem ser cortados das fotos, ele o faz.
       face = open_crop_and_resize_face(imagePath)
       faces.append(face)
@@ -80,8 +80,10 @@ def is_match(known_embedding, candidate_embedding, thresh=0.5):
   score = cosine(known_embedding, candidate_embedding)
   if score <= thresh:
     print('>face is a Match (%.3f <= %.3f)' % (score, thresh))
+    return True
   else:
     print('>face is NOT a Match (%.3f > %.3f)' % (score, thresh))
+    return False
 
 print("[INFO] loading encodings...")
 data = pickle.loads(open(args["encodings"], "rb").read())
@@ -92,23 +94,28 @@ unknown_encodings, unknown_names = get_embeddings(args["image"])
 person_names = []
 person_encodings = []
 
-person_encodings = data[unknown_names[0]]
+# Itera sobre os códigos de incorporações
+data_unknown = {}
+for embbeding, filename in zip(unknown_encodings, unknown_names):
+  # Adiciona cada nome e código a listas correspondentes.
+  if filename in data_unknown:
+    data_unknown[filename].append( embbeding )
+  else: 
+    data_unknown[filename] = [embbeding]
 
-# loop over the facial embeddings
-for encoding in unknown_encodings:
-  # attempt to match each face in the input image to our known
-  # encodings
-  for known_encoding in person_encodings:
-      is_match(encoding, known_encoding)
-      """  
-  if True in matches:
-    # loop over the recognized faces
-    for ((top, right, bottom, left), name) in zip(boxes, person_names):
-      # draw the predicted face name on the image
-      cv2.rectangle(resized, (left, top), (right, bottom), (0, 255, 0), 2)
-      y = top - 15 if top - 15 > 15 else top + 15
-      cv2.putText(resized, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2) """
 
-# show the output image
-#cv2.imshow("Image", resized)
-#cv2.waitKey(0)
+for unknown_person in data_unknown.keys():
+  # Primeiro procuramos em database pela pessoa a ser  comparada
+  person_encodings = data[ unknown_person ]
+  
+  for encoding in data_unknown[unknown_person]:
+  # Depois iteramos pelas imagens a serem comparadas da mesma pessoa
+    matches = []
+    for known_encoding in person_encodings:
+      # Nós armazenamos os resultados em uma lista
+      matches.append( is_match( encoding, known_encoding ) )
+
+    if( matches.count(True) > len(matches)/2 ):
+      print( "A imagem é do " + unknown_person )
+    else: 
+      print( "A imagem não é do " + unknown_person )

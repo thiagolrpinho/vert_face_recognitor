@@ -17,13 +17,15 @@ def open_image_canon_position( image_name ):
       if ExifTags.TAGS[orientation]=='Orientation' : break
   if( image._getexif() ):
     exif=dict(image._getexif().items())
-
-    if exif[orientation] == 3 :
-        image=image.rotate(180, expand=True)
-    elif exif[orientation] == 6 :
-        image=image.rotate(270, expand=True)
-    elif exif[orientation] == 8 :
-        image=image.rotate(90, expand=True)
+    try:
+      if exif[orientation] == 3 :
+          image=image.rotate(180, expand=True)
+      elif exif[orientation] == 6 :
+          image=image.rotate(270, expand=True)
+      elif exif[orientation] == 8 :
+          image=image.rotate(90, expand=True)
+    except KeyError:
+      print("Codificação da imagem inválida")
 
   return image
 
@@ -83,9 +85,11 @@ def open_crop_and_resize_face(filename):
   pixels = open_image_canon_position(filename)
   # Covert to RGB and also to an array that can be interpreted by openCV
   image = cv2.cvtColor( np.array( pixels ) , cv2.COLOR_BGR2RGB)
-
+#  cv2.imshow("Image", image)
+#  cv2.waitKey(0)
   face = crop_face(image)
   face = cv2.resize(face, (224, 224))
+ 
 
   return face
 
