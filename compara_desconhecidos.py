@@ -15,7 +15,7 @@ from encoding_helpers import get_embeddings, is_match, store_codes_with_names
 
 # Parte do código responsável por criar e configurar os argumentos para a chamada no terminal
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", default="database_test",
+ap.add_argument("-i", "--image", default="database_comparacao",
   help="path to input database of unkown images")
 ap.add_argument("-e", "--encodings", default="encodings.pickle",
   help="path to serialized db of facial encodings")
@@ -23,29 +23,28 @@ ap.add_argument("-d", "--detection-method", type=str, default="cnn",
   help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
 
-print("[INFO] loading encodings...")
-data = pickle.loads(open(args["encodings"], "rb").read())
+print("[INFO] Carregando dados de pessoas conhecidas...")
+dados_conhecidos = pickle.loads(open(args["encodings"], "rb").read())
 
 unknown_encodings, unknown_names, unknown_filenames = get_embeddings(args["image"])
 
 # Organizamos as prováveis pessoas por nome com seus respectivos códigos e nome do arquivo
-data_unknown = store_codes_with_names(unknown_encodings, unknown_names, unknown_filenames)
-print(data_unknown)
+dados_comparacao = store_codes_with_names(unknown_encodings, unknown_names, unknown_filenames)
 
-for unknown_person in data_unknown.keys():
+for pessoa_comparada in dados_comparacao.keys():
   # Primeiro procuramos em database pela pessoa a ser  comparada
-  person_encodings = data[ unknown_person ]
+  dados_por_pessoa = dados_conhecidos[ pessoa_comparada ]
   
-  for encoding, filename in data_unknown[unknown_person]:
+  for codigo_comparado, nome_arquivo_comparado in dados_comparacao [pessoa_comparada]:
   # Depois iteramos pelas imagens a serem comparadas da mesma pessoa
     matches = []
-    for known_encoding, known_filename in person_encodings:
+    for codigo_conhecido, nome_arquivo_conhecido in dados_por_pessoa:
       # Nós armazenamos os resultados em uma lista
-      matches.append( is_match( encoding, known_encoding ) )
+      matches.append( is_match( codigo_comparado, codigo_conhecido ) )
 
     if( matches.count(True) > len(matches)/2 ):
       # Se mais que a metade dos rostos baterem, consideramos a pessoa como a mesma
-      print( "A imagem " + filename + " é do " + unknown_person )
+      print( "A imagem " + nome_arquivo_comparado + " é do " + pessoa_comparada )
     else: 
-      print( "A imagem " + filename + " não é do " + unknown_person )
+      print( "A imagem " + nome_arquivo_comparado + " não é do " + pessoa_comparada )
 

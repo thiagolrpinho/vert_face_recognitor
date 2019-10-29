@@ -21,7 +21,7 @@ from encoding_helpers import get_embeddings, store_codes_with_names
 
 # Parte do código responsável por criar e configurar os argumentos para a chamada no terminal
 ap = argparse.ArgumentParser()
-ap.add_argument("-db", "--database", default="database_labeled",
+ap.add_argument("-db", "--database", default="database_conhecidos",
   help="path to input directory of faces + images")
 ap.add_argument("-e", "--encodings", default="encodings.pickle",
   help="path to serialized db of facial encodings")
@@ -35,9 +35,9 @@ embbedings, person_names, filenames = get_embeddings(args["database"])
 
 # Itera sobre os códigos de incorporações
 
-data = store_codes_with_names(embbedings, person_names, filenames)
+dados_conhecidos = store_codes_with_names(embbedings, person_names, filenames)
 
 # Armazena os nomes e códigos gerados
 f = open(args["encodings"], "wb")
-f.write(pickle.dumps(data))
+f.write(pickle.dumps(dados_conhecidos))
 f.close()
