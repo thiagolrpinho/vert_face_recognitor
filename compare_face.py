@@ -11,7 +11,7 @@
 
 import argparse
 import pickle
-from encoding_helpers import get_embeddings, is_match
+from encoding_helpers import get_embeddings, is_match, store_codes_with_names
 
 # Parte do código responsável por criar e configurar os argumentos para a chamada no terminal
 ap = argparse.ArgumentParser()
@@ -26,35 +26,26 @@ args = vars(ap.parse_args())
 print("[INFO] loading encodings...")
 data = pickle.loads(open(args["encodings"], "rb").read())
 
-unknown_encodings, unknown_names = get_embeddings(args["image"])
+unknown_encodings, unknown_names, unknown_filenames = get_embeddings(args["image"])
 
-# initialize the list of names for each face detected
-person_names = []
-person_encodings = []
-
-# Itera sobre os códigos de incorporações
-data_unknown = {}
-for embbeding, filename in zip(unknown_encodings, unknown_names):
-  # Adiciona cada nome e código a listas correspondentes.
-  if filename in data_unknown:
-    data_unknown[filename].append( embbeding )
-  else: 
-    data_unknown[filename] = [embbeding]
-
+# Organizamos as prováveis pessoas por nome com seus respectivos códigos e nome do arquivo
+data_unknown = store_codes_with_names(unknown_encodings, unknown_names, unknown_filenames)
+print(data_unknown)
 
 for unknown_person in data_unknown.keys():
   # Primeiro procuramos em database pela pessoa a ser  comparada
   person_encodings = data[ unknown_person ]
   
-  for encoding in data_unknown[unknown_person]:
+  for encoding, filename in data_unknown[unknown_person]:
   # Depois iteramos pelas imagens a serem comparadas da mesma pessoa
     matches = []
-    for known_encoding in person_encodings:
+    for known_encoding, known_filename in person_encodings:
       # Nós armazenamos os resultados em uma lista
       matches.append( is_match( encoding, known_encoding ) )
 
     if( matches.count(True) > len(matches)/2 ):
       # Se mais que a metade dos rostos baterem, consideramos a pessoa como a mesma
-      print( "A imagem é do " + unknown_person )
+      print( "A imagem " + filename + " é do " + unknown_person )
     else: 
-      print( "A imagem não é do " + unknown_person )
+      print( "A imagem " + filename + " não é do " + unknown_person )
+

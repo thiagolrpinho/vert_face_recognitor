@@ -17,7 +17,7 @@ import keras_vggface
 
 import argparse
 import pickle
-from encoding_helpers import get_embeddings
+from encoding_helpers import get_embeddings, store_codes_with_names
 
 # Parte do código responsável por criar e configurar os argumentos para a chamada no terminal
 ap = argparse.ArgumentParser()
@@ -30,18 +30,12 @@ ap.add_argument("-d", "--detection-method", type=str, default="cnn",
 args = vars(ap.parse_args())
 
 # Converte as imagens da database em códigos de incorporação
-embbedings, filenames = get_embeddings(args["database"])
+embbedings, person_names, filenames = get_embeddings(args["database"])
 
 
 # Itera sobre os códigos de incorporações
-data = {}
-for embbeding, filename in zip(embbedings, filenames):
-  # Adiciona cada nome e código a listas correspondentes.
-  if filename in data:
-    data[filename].append( embbeding )
-  else: 
-    data[filename] = [embbeding]
-  
+
+data = store_codes_with_names(embbedings, person_names, filenames)
 
 # Armazena os nomes e códigos gerados
 f = open(args["encodings"], "wb")

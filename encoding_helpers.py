@@ -20,14 +20,17 @@ def get_embeddings( database_folder_name, crop=True ):
   imagePaths = list(paths.list_images( database_folder_name ))
   faces = []
   filenames = []
+  person_names = []
   # Itera sobre os caminhos das imagens
   for (i, imagePath) in enumerate(imagePaths):
     # Extrai a face da pessoa na imagem, caso haja
     print("[INFO] Processando imagem {}/{}".format(i + 1,
       len(imagePaths)))
 
-    filename = imagePath.split(os.path.sep)[-2]
+    filename = imagePath.split(os.path.sep)[-1]
+    person_name = imagePath.split(os.path.sep)[-2]
     filenames.append(filename)
+    person_names.append(person_name)
     
     if crop == True:
       # Se os rostos precisarem ser cortados das fotos, ele o faz.
@@ -48,11 +51,13 @@ def get_embeddings( database_folder_name, crop=True ):
   # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
   embeddings = model.predict(samples)
 
-  return embeddings, filenames
+  return embeddings, person_names, filenames
 
-# determine if a candidate face is a match for a known face
+
 def is_match(known_embedding, candidate_embedding, thresh=0.5):
-  # calculate distance between embeddings as they're described as 128 dimensions coordinate
+  # Retorna verdadeiro se estiver abaixo do limiar de diferença ou falso se for acima
+  # Dado que os códigos são descritos como uma coordenada em 128 dimensões
+  # Calculamos a distância entre as duas imagens como pontos
   score = cosine(known_embedding, candidate_embedding)
   if score <= thresh:
     print('>face is a Match (%.3f <= %.3f)' % (score, thresh))
@@ -60,3 +65,13 @@ def is_match(known_embedding, candidate_embedding, thresh=0.5):
   else:
     print('>face is NOT a Match (%.3f > %.3f)' % (score, thresh))
     return False
+
+def store_codes_with_names( embbedings, person_names, filenames):
+  data = {}
+  for embbeding, person_name, filename in zip( embbedings, person_names, filenames ):
+    # Adiciona cada código e nome de arquivo para cada nome de pessoa
+    if person_name in data:
+      data[person_name].append( [embbeding, filename] )
+    else: 
+      data[person_name] = [[embbeding, filename]]
+  return data
