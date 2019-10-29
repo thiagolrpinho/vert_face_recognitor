@@ -54,7 +54,7 @@ def get_embeddings( database_folder_name, crop=True ):
   return embeddings, person_names, filenames
 
 
-def is_match(known_embedding, candidate_embedding, thresh=0.5):
+def is_match(known_embedding, candidate_embedding, thresh = 0.5):
   # Retorna verdadeiro se estiver abaixo do limiar de diferença ou falso se for acima
   # Dado que os códigos são descritos como uma coordenada em 128 dimensões
   # Calculamos a distância entre as duas imagens como pontos
