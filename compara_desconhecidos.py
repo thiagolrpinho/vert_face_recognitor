@@ -43,7 +43,7 @@ for pessoa_comparada in dados_comparacao.keys():
         # Nós armazenamos os resultados em uma lista
         matches.append( is_match( codigo_comparado, codigo_conhecido ) )
 
-      if( matches.count(True) > len(matches)/2 ):
+      if( matches.count(True) >= len(matches)/2 ):
         # Se mais que a metade dos rostos baterem, consideramos a pessoa como a mesma
         print( "A imagem " + nome_arquivo_comparado + " é do " + pessoa_comparada )
       else: 
