@@ -6,6 +6,9 @@ import face_recognition
 from matplotlib import pyplot
 from PIL import Image, ExifTags
 import numpy as np
+import datetime
+import os
+from imutils import paths
 
 def open_image_canon_position( image_full_path ):
   ''' Open an image file and returns it the image in it at canon position'''
@@ -93,4 +96,11 @@ def open_crop_and_resize_face(filePath):
 
   return face, original_image
 
+def save_image(imagem_comparada, nome_arquivo_comparado, nome_arquivo_conhecido, nome_database):
+  'Receive image known and unknown to save them in folder for future comparison and presentation'
+  now = datetime.datetime.now()
+  imagem_comparada.save("./database_" + nome_database + "/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_comparado" + ".jpg")
+  imagePath = list(paths.list_images( "./database_conhecidos/" + nome_arquivo_conhecido[:-5] ))[0]
+  imagem_conhecida = Image.open(imagePath)
+  imagem_conhecida.save("./database_" + nome_database + "/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_original" + ".jpg")
 

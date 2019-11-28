@@ -12,10 +12,8 @@
 import argparse
 import pickle
 from encoding_helpers import get_embeddings, is_match, store_codes_with_names
-from PIL import Image, ExifTags
-import datetime
-import os
-from imutils import paths
+from image_helpers import save_image
+
 
 # Parte do código responsável por criar e configurar os argumentos para a chamada no terminal
 ap = argparse.ArgumentParser()
@@ -50,13 +48,12 @@ for pessoa_comparada in dados_comparacao.keys():
       if( matches.count(True) >= len(matches)/2 ):
         # Se mais que a metade dos rostos baterem, consideramos a pessoa como a mesma
         print( "A imagem " + nome_arquivo_comparado + " é do " + pessoa_comparada )
+        # Salva imagem comparada e conhecida na pasta de comparações aprovadas
+        save_image(imagem_comparada, nome_arquivo_comparado, nome_arquivo_conhecido, nome_database = "aprovadas")
       else: 
         print( "A imagem " + nome_arquivo_comparado + " não é do " + pessoa_comparada )
-        now = datetime.datetime.now()
-        imagem_comparada.save("./database_vetadas/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_vetado" + ".jpg")
-        imagePath = list(paths.list_images( "./database_conhecidos/" + nome_arquivo_conhecido[:-5] ))[0]
-        imagem_conhecida = Image.open(imagePath)
-        imagem_conhecida.save("./database_vetadas/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_original" + ".jpg")
+        # Salva imagem comparada e conhecida na pasta de comparações vetadas
+        save_image(imagem_comparada, nome_arquivo_comparado, nome_arquivo_conhecido, nome_database = "vetadas")
 
 
   else: 
