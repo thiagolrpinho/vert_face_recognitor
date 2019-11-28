@@ -82,15 +82,15 @@ def crop_face(image):
 
 def open_crop_and_resize_face(filePath):
 # load image from file
-  pixels = open_image_canon_position(filePath)
+  original_image = open_image_canon_position(filePath)
   # Covert to RGB and also to an array that can be interpreted by openCV
-  image = cv2.cvtColor( np.array( pixels ) , cv2.COLOR_BGR2RGB)
+  image_nparray = cv2.cvtColor( np.array( original_image ) , cv2.COLOR_BGR2RGB)
 #  cv2.imshow("Image", image)
 #  cv2.waitKey(0)
-  face = crop_face(image)
+  face = crop_face(image_nparray)
   face = cv2.resize(face, (224, 224))
  
 
-  return face
+  return face, original_image
 
 
