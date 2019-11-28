@@ -35,15 +35,14 @@ def get_embeddings( database_folder_name, crop=True ):
     
     if crop == True:
       # Se os rostos precisarem ser cortados das fotos, ele o faz.
-      face_nparray, face_image = open_crop_and_resize_face(imagePath)
-      faces.append(face_nparray)
-      images.append(face_image)
+      face_nparray, original_image = open_crop_and_resize_face(imagePath)
     else:
       # Caso contrário ele somente abre e muda para o tamanho adequado.
       face_nparray = pyplot.imread(imagePath)
       face_nparray = cv2.resize(face_nparray, (224,224) )
-      faces.append(face_nparray)
-      images.append(face_image)
+
+    faces.append(face_nparray)
+    images.append(original_image)
 
     #  Converte em um array de samples
   samples = asarray(faces, 'float32')
