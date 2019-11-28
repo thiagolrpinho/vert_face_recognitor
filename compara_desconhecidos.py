@@ -48,6 +48,9 @@ for pessoa_comparada in dados_comparacao.keys():
         print( "A imagem " + nome_arquivo_comparado + " é do " + pessoa_comparada )
       else: 
         print( "A imagem " + nome_arquivo_comparado + " não é do " + pessoa_comparada )
+
+        
+
   else: 
     # Caso a pessoa não seja encontrada na base de dados conhecida, ela não é comparada 
     # e um aviso é emitido no terminal

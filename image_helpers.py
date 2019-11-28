@@ -7,10 +7,10 @@ from matplotlib import pyplot
 from PIL import Image, ExifTags
 import numpy as np
 
-def open_image_canon_position( image_name ):
+def open_image_canon_position( image_full_path ):
   ''' Open an image file and returns it the image in it at canon position'''
 
-  image = Image.open(image_name)
+  image = Image.open(image_full_path)
 
   for orientation in ExifTags.TAGS.keys() :
   # First we verify if there's the metadata needed to make know if the image is in canon position
@@ -80,9 +80,9 @@ def crop_face(image):
   return image
 
 
-def open_crop_and_resize_face(filename):
+def open_crop_and_resize_face(filePath):
 # load image from file
-  pixels = open_image_canon_position(filename)
+  pixels = open_image_canon_position(filePath)
   # Covert to RGB and also to an array that can be interpreted by openCV
   image = cv2.cvtColor( np.array( pixels ) , cv2.COLOR_BGR2RGB)
 #  cv2.imshow("Image", image)
