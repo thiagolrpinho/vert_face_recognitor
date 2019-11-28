@@ -13,6 +13,9 @@ import argparse
 import pickle
 from encoding_helpers import get_embeddings, is_match, store_codes_with_names
 from PIL import Image, ExifTags
+import datetime
+import os
+from imutils import paths
 
 # Parte do código responsável por criar e configurar os argumentos para a chamada no terminal
 ap = argparse.ArgumentParser()
@@ -49,8 +52,12 @@ for pessoa_comparada in dados_comparacao.keys():
         print( "A imagem " + nome_arquivo_comparado + " é do " + pessoa_comparada )
       else: 
         print( "A imagem " + nome_arquivo_comparado + " não é do " + pessoa_comparada )
+        now = datetime.datetime.now()
+        imagem_comparada.save("./database_vetadas/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_vetado" + ".jpg")
+        imagePath = list(paths.list_images( "./database_conhecidos/" + nome_arquivo_conhecido[:-5] ))[0]
+        imagem_conhecida = Image.open(imagePath)
+        imagem_conhecida.save("./database_vetadas/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_original" + ".jpg")
 
-        imagem_comparada.save(nome_arquivo_comparado, "JPEG")
 
   else: 
     # Caso a pessoa não seja encontrada na base de dados conhecida, ela não é comparada 
