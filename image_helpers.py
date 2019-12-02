@@ -1,6 +1,4 @@
 # Module created to develop auxiliary functions to deal with images
-# Modifiers: Thiago Luis, Rodrigo Lassarte
-# Last edit: 2019/10/29
 import cv2
 import face_recognition
 from matplotlib import pyplot
@@ -99,8 +97,23 @@ def open_crop_and_resize_face(filePath):
 def save_image(imagem_comparada, nome_arquivo_comparado, nome_arquivo_conhecido, nome_database):
   'Receive image known and unknown to save them in folder for future comparison and presentation'
   now = datetime.datetime.now()
-  imagem_comparada.save("./database_" + nome_database + "/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_comparado" + ".jpg")
+  # Primeiro nós encontramos o caminho para a primeira foto da pessoa sendo comparada na base de dados conhecida
   imagePath = list(paths.list_images( "./database_conhecidos/" + nome_arquivo_conhecido[:-5] ))[0]
-  imagem_conhecida = Image.open(imagePath)
-  imagem_conhecida.save("./database_" + nome_database + "/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_original" + ".jpg")
+  
+  # Depois criamos a pasta, caso ela não exista.
+  if os.makedirs("./database_" + nome_database):
+    print("[INFO]Diretório para a base de dados " + nome_database + " criada com sucesso.")
+  
+  # E então armazenamos a foto comparada seguida da original com suas respectivas denotações
+  try:
+    imagem_comparada.save("./database_" + nome_database + "/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_comparado" + ".jpg")
+  except: 
+    print("[INFO]Foto " + nome_arquivo_comparado[-5:] + " teve problemas ao ser armazenado.")
+
+
+  try:
+    imagem_conhecida = Image.open(imagePath)
+    imagem_conhecida.save("./database_" + nome_database + "/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_original" + ".jpg")
+  except:
+    print("[INFO]Foto " + nome_arquivo_comparado[-5:] + "_original teve problemas ao ser armzenado")
 
