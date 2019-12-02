@@ -30,12 +30,12 @@ ap.add_argument("-d", "--detection-method", type=str, default="cnn",
 args = vars(ap.parse_args())
 
 # Converte as imagens da database em códigos de incorporação
-embbedings, person_names, filenames = get_embeddings(args["database"])
+embbedings, person_names, filenames, images = get_embeddings(args["database"])
 
 
 # Itera sobre os códigos de incorporações
 
-dados_conhecidos = store_codes_with_names(embbedings, person_names, filenames)
+dados_conhecidos = store_codes_with_names(embbedings, person_names, filenames, images)
 
 # Armazena os nomes e códigos gerados
 f = open(args["encodings"], "wb")
