@@ -15,6 +15,7 @@ def index():
 def upload():
     if request.method == 'POST':
         # check if the post request has the file part
+        print(request.files)
         if 'file' not in request.files:
             print('No file part')
             return redirect(url_for('index'))
@@ -50,7 +51,7 @@ if __name__ == '__main__':
     else:
         APP_IP = '0.0.0.0'
         APP_PORT = 7050
-        UPLOAD_FOLDER = '/imgcaslib'
+        UPLOAD_FOLDER = './uploads'
         AUTHINFO = './.authinfo'
         ASTORE = 'lenet'
         # ASTORE_LIB = 'casuser'
