@@ -16,6 +16,10 @@ def upload():
     if request.method == 'POST':
         # check if the post request has the file part
         print(request.files)
+        print(request.form)
+        if not request.form:
+            print("No identification")
+            return redirect(url_for('index'))
         if 'file' not in request.files:
             print('No file part')
             return redirect(url_for('index'))
