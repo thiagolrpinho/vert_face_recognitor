@@ -14,6 +14,13 @@ app.secret_key = "TEU_PAI"
 def index():
     return render_template('index.html')
 
+@app.route('/result')
+def result(match_result):
+    if match_result:
+        return render_template('is_same.html')
+    else:
+        return render_template('not_same.html')
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
@@ -45,10 +52,11 @@ def upload():
             os.remove(path)
         
         embeddings = faces_to_embeddings(faces)
-        if is_match(embeddings[0], embeddings[1]):
-            return "Se pá é"
-        else:
-            return "Se pá não é"
+        #if is_match(embeddings[0], embeddings[1]):
+            #return "Se pá é"
+        #else:
+        #    return "Se pá não é"
+        return result(is_match(embeddings[0], embeddings[1]))
     return redirect(url_for('index'))
 
 @app.route('/uploads/<filename>')
