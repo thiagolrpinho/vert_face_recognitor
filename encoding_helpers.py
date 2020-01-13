@@ -44,7 +44,7 @@ def get_embeddings( database_folder_name, crop=True ):
     faces.append(face_nparray)
     images.append(original_image)
 
-    #  Converte em um array de samples
+  #  Converte em um array de samples
   samples = asarray(faces, 'float32')
   # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
   samples = preprocess_input(samples, version=2)

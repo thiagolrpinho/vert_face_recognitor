@@ -20,9 +20,9 @@
           <div class="demo-container" id="image-demo">
             <div class="ty-center ty-app">
               <div class="try-it ty-app">Try it!</div>
-              <form action="/upload" method='post'>
-                <input type="file" enctype="multipart/form-data" name="first_image" accept="image/*">
-                <input type="file" enctype="multipart/form-data" name="second_image" accept="image/*">
+              <form action="/upload" enctype="multipart/form-data" method='post'>
+                <input type="file" name="first_image" accept="image/*">
+                <input type="file" name="second_image" accept="image/*">
                 <input type="submit">
               </form>
             </div>
