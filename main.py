@@ -1,12 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, flash
 import os
 from werkzeug.utils import secure_filename
 import sys
 # Based on https://github.com/tylerfreckmann/cas-api
-# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
-
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+UPLOAD_FOLDER = './uploads'
 app = Flask(__name__)
-
+app.secret_key = "TEU_PAI"
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -16,21 +16,22 @@ def upload():
     if request.method == 'POST':
         # check if the post request has the file part
         print(request.files)
+        print(request.values)
         print(request.form)
-        if not request.form:
-            print("No identification")
-            return redirect(url_for('index'))
         if 'file' not in request.files:
             print('No file part')
-            return redirect(url_for('index'))
+            return redirect(request.url)
         file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
         if file.filename == '':
             print('No selected file')
-            return redirect(url_for('index'))
-        if file:
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
-            file.save(filepath)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('uploaded_file',
+                                    filename=filename))
 
     return redirect(url_for('index'))
 
