@@ -43,15 +43,14 @@ def get_embeddings( database_folder_name, crop=True ):
 
     faces.append(face_nparray)
     images.append(original_image)
-
-  #  Converte em um array de samples
-  samples = asarray(faces, 'float32')
-  # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
-  samples = preprocess_input(samples, version=2)
-  # Cria um modelo já treinado do VGGFace
-  model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
-  # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
-  embeddings = model.predict(samples)
+    #  Converte em um array de samples
+    samples = asarray(faces, 'float32')
+    # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
+    samples = preprocess_input(samples, version=2)
+    # Cria um modelo já treinado do VGGFace
+    model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
+    # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
+    embeddings = model.predict(samples)
 
   return embeddings, person_names, filenames, images
 
@@ -77,3 +76,22 @@ def store_codes_with_names( embbedings, person_names, filenames, images):
     else: 
       data[person_name] = [[embbeding, filename, image]]
   return data
+
+
+def faces_to_embeddings(faces):
+    ''' Receives an already treated array
+        with images sized 224x224 and return
+        their's respective embedding code '''
+    print(type(faces[0]))
+    #  Converte em um array de samples
+    samples = asarray(faces, 'float32')
+    # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
+    samples = preprocess_input(samples, version=2)
+    # Cria um modelo já treinado do VGGFace
+    model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
+    # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
+    embeddings = model.predict(samples)
+    print(type(embeddings[0]))
+
+    return embeddings
+

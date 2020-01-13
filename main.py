@@ -2,12 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import os
 from werkzeug.utils import secure_filename
 import sys
-from numpy import asarray
 from image_helpers import open_crop_and_resize_face
-from encoding_helpers import is_match
-from keras_vggface.vggface import VGGFace
-from keras_vggface.utils import preprocess_input
-from scipy.spatial.distance import cosine
+from encoding_helpers import is_match, faces_to_embeddings
 
 # Based on https://github.com/tylerfreckmann/cas-api
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -33,12 +29,12 @@ def upload():
         images.append(request.files['second_image'])
         # if user does not select file, browser also
         # submit an empty part without filename
-        for image in images:
+        for i, image in enumerate(images):
             if image.filename == '':
                 print('No selected file')
                 return redirect(request.url)
             if image and allowed_file(image.filename):
-                filename = secure_filename(image.filename)
+                filename = secure_filename(image.filename + str(i))
                 path = os.path.join(UPLOAD_FOLDER, filename)
                 image.save(path)
                 paths.append(path)
@@ -46,14 +42,9 @@ def upload():
         for path in paths:
             face_nparray, original_image = open_crop_and_resize_face(path)
             faces.append(face_nparray)
-        #  Converte em um array de samples
-        samples = asarray(faces, 'float32')
-        # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
-        samples = preprocess_input(samples, version=2)
-        # Cria um modelo já treinado do VGGFace
-        model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
-        # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
-        embeddings = model.predict(samples)
+            os.remove(path)
+        
+        embeddings = faces_to_embeddings(faces)
         if is_match(embeddings[0], embeddings[1]):
             return "Se pá é"
         else:
