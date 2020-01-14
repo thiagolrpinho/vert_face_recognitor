@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
+    <article>
+        <header>
+            <div class="ty-header-div" style="text-align: center;">
+                <h1 class="ty-title">Vert Analytics</h1>
+                <h2 class="ty-subtitle">Ninjas em ação</h2>
+            </div>
+        </header>
+        <section class="ty-content">
+            <div class="ty-showcase">
+                <div class="ty-showcase-content">
+                    <h2 style="text-align: center;">Vert Tecnologia</h2>
+                    <p class="ty-text-body">
+                        <center>
+                            Soluções em informáticas
+                        </center>
+                    </p>
+                </div>
+            </div>
+            <!-- DEMO -->
+            <div class="demo-container" id="image-demo">
+                <div class="ty-center ty-app">
+                    <div class="try-it ty-app">Try it!</div>
+                    <input type="button" onclick="location.href='/reconhecimento_facial/';" value="Reconhecimento Facial" />
+                    <input type="button" onclick="location.href='/renach/';" value="Renach" />
+                </div>
+            </div>
+            <!-- END DEMO -->
+        </section>
+    </article>
+</div>
+{% endblock %}

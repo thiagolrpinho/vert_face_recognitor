@@ -11,6 +11,9 @@ UPLOAD_FOLDER = './uploads'
 app = Flask(__name__)
 app.secret_key = "TEU_PAI"
 
+@app.route('/')
+def index():
+    return render_template('index.html', host=APP_IP, port=str(APP_PORT))
 
 @app.route('/reconhecimento_facial/')
 def reconhecimento_index():
