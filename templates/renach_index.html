@@ -12,10 +12,10 @@
         <section class="ty-content">
             <div class="ty-showcase">
                 <div class="ty-showcase-content">
-                    <h2 style="text-align: center;">Vert Tecnologia</h2>
+                    <h2 style="text-align: center;">Renach</h2>
                     <p class="ty-text-body">
                         <center>
-                            Soluções em informáticas
+                            Extração de documentos de maneira rápida e inteligente.
                         </center>
                     </p>
                 </div>
@@ -24,8 +24,10 @@
             <div class="demo-container" id="image-demo">
                 <div class="ty-center ty-app">
                     <div class="try-it ty-app">Try it!</div>
-                    <input type="button" onclick="location.href='/reconhecimento_facial/';" value="Reconhecimento Facial" />
-                    <input type="button" onclick="location.href='/renach/';" value="Renach" />
+                    <form action="/renach/upload" enctype="multipart/form-data" method='post'>
+                        <input type="file" name="file" accept="image/*">
+                        <input type="submit">
+                    </form>
                 </div>
             </div>
             <!-- END DEMO -->

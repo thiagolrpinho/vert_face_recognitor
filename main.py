@@ -10,12 +10,25 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './uploads'
 app = Flask(__name__)
 app.secret_key = "TEU_PAI"
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', host=APP_IP, port=str(APP_PORT))
 
-@app.route('/upload', methods=['GET', 'POST'])
-def upload():
+@app.route('/reconhecimento_facial/')
+def reconhecimento_index():
+    return render_template('reconhecimento_index.html')
+
+
+@app.route('/reconhecimento_facial/result')
+def reconhecimento_result(match_result):
+    if match_result:
+        return render_template('is_same.html')
+    else:
+        return render_template('not_same.html')
+
+@app.route('/reconhecimento_facial/upload', methods=['GET', 'POST'])
+def reconhecimento_upload():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'first_image' not in request.files or\
@@ -34,7 +47,12 @@ def upload():
                 print('No selected file')
                 return redirect(request.url)
             if image and allowed_file(image.filename):
-                filename = secure_filename(image.filename + str(i))
+                ##### ERRO #####
+                # Nessa etapa está sendo alterada a extensão do arquivo 
+                # para por exemplo .jpg0 .jpg1 e etc
+                # o arquivo está sendo identificado com codificação inválida
+                # e por algum motivo o arquivo não está sendo salvo
+                filename = secure_filename(str(image.filename) + str(i))
                 path = os.path.join(UPLOAD_FOLDER, filename)
                 image.save(path)
                 paths.append(path)
@@ -43,21 +61,45 @@ def upload():
             face_nparray, original_image = open_crop_and_resize_face(path)
             faces.append(face_nparray)
             os.remove(path)
-        
         embeddings = faces_to_embeddings(faces)
-        if is_match(embeddings[0], embeddings[1]):
-            return "Se pá é"
-        else:
-            return "Se pá não é"
-    return redirect(url_for('index'))
+        return reconhecimento_result(is_match(embeddings[0], embeddings[1]))
+    return redirect(url_for('reconhecimento_index'))
+
+
+@app.route('/renach/')
+def renach_index():
+    return render_template('renach_index.html')
+
+
+@app.route('/renach/upload', methods=['GET', 'POST'])
+def renach_upload():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            print('No file part')
+            return redirect(request.url)
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        renach_image = request.files['file']
+        if renach_image.filename == '':
+            print('No selected file')
+            return redirect(request.url)
+        if renach_image and allowed_file(renach_image.filename):
+            texto_extraido = renach_extrai_textos(renach_image)
+            return texto_extraido
+    return redirect(url_for('renach_index'))
+
+def renach_extrai_textos(image):
+    return 'Belo conteúdo extraído da renach'
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 6:
@@ -77,3 +119,6 @@ if __name__ == '__main__':
         ASTORE = 'lenet'
         # ASTORE_LIB = 'casuser'
     app.run(debug=True, host=APP_IP, port=APP_PORT)
+
+
+
