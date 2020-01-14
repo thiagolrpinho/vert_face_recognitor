@@ -19,13 +19,6 @@ def index():
 def reconhecimento_index():
     return render_template('reconhecimento_index.html')
 
-          filename = "first_image.jpg"
-          if i == 1:
-            filename = "second_image.jpg"
-          path = os.path.join(UPLOAD_FOLDER, filename)
-          os.remove(path)
-          image.save(path)
-          paths.append(path)
 
 @app.route('/reconhecimento_facial/result')
 def reconhecimento_result(match_result):
@@ -59,15 +52,18 @@ def reconhecimento_upload():
                 # para por exemplo .jpg0 .jpg1 e etc
                 # o arquivo está sendo identificado com codificação inválida
                 # e por algum motivo o arquivo não está sendo salvo
-                filename = secure_filename(str(image.filename) + str(i))
+                filename = "first_image.jpg"
+                if i == 1:
+                    filename = "second_image.jpg"
                 path = os.path.join(UPLOAD_FOLDER, filename)
+                if os.path.isfile(path):
+                    os.remove((path))
                 image.save(path)
                 paths.append(path)
 
         for path in paths:
             face_nparray, original_image = open_crop_and_resize_face(path)
             faces.append(face_nparray)
-            os.remove(path)
         embeddings = faces_to_embeddings(faces)
         return reconhecimento_result(is_match(embeddings[0], embeddings[1]))
     return redirect(url_for('reconhecimento_index'))
