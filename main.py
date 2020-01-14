@@ -10,7 +10,8 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './uploads'
 app = Flask(__name__)
 app.secret_key = "TEU_PAI"
-
+app.config["CACHE_TYPE"] = "null"
+app.app_context.
 @app.route('/')
 def index():
     return render_template('index.html', host=APP_IP, port=str(APP_PORT))
@@ -19,6 +20,13 @@ def index():
 def reconhecimento_index():
     return render_template('reconhecimento_index.html')
 
+          filename = "first_image.jpg"
+          if i == 1:
+            filename = "second_image.jpg"
+          path = os.path.join(UPLOAD_FOLDER, filename)
+          os.remove(path)
+          image.save(path)
+          paths.append(path)
 
 @app.route('/reconhecimento_facial/result')
 def reconhecimento_result(match_result):
