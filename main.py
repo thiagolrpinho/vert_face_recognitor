@@ -11,7 +11,6 @@ UPLOAD_FOLDER = './uploads'
 app = Flask(__name__)
 app.secret_key = "TEU_PAI"
 app.config["CACHE_TYPE"] = "null"
-app.app_context.
 @app.route('/')
 def index():
     return render_template('index.html', host=APP_IP, port=str(APP_PORT))
