@@ -15,17 +15,11 @@ app.config["CACHE_TYPE"] = "null"
 def index():
     return render_template('index.html', host=APP_IP, port=str(APP_PORT))
 
+
 @app.route('/reconhecimento_facial/')
 def reconhecimento_index():
     return render_template('reconhecimento_index.html')
 
-
-@app.route('/reconhecimento_facial/result')
-def reconhecimento_result(match_result):
-    if match_result:
-        return render_template('is_same.html')
-    else:
-        return render_template('not_same.html')
 
 @app.route('/reconhecimento_facial/upload', methods=['GET', 'POST'])
 def reconhecimento_upload():
@@ -38,6 +32,7 @@ def reconhecimento_upload():
         images = []
         faces = []
         paths = []
+        relative_paths = []
         images.append(request.files['first_image'])
         images.append(request.files['second_image'])
         # if user does not select file, browser also
@@ -47,25 +42,24 @@ def reconhecimento_upload():
                 print('No selected file')
                 return redirect(request.url)
             if image and allowed_file(image.filename):
-                ##### ERRO #####
-                # Nessa etapa está sendo alterada a extensão do arquivo 
-                # para por exemplo .jpg0 .jpg1 e etc
-                # o arquivo está sendo identificado com codificação inválida
-                # e por algum motivo o arquivo não está sendo salvo
-                filename = "first_image.jpg"
-                if i == 1:
-                    filename = "second_image.jpg"
+                filename = image.filename
                 path = os.path.join(UPLOAD_FOLDER, filename)
                 if os.path.isfile(path):
                     os.remove((path))
                 image.save(path)
+                print(path)
                 paths.append(path)
 
-        for path in paths:
-            face_nparray, original_image = open_crop_and_resize_face(path)
-            faces.append(face_nparray)
-        embeddings = faces_to_embeddings(faces)
-        return reconhecimento_result(is_match(embeddings[0], embeddings[1]))
+        if len(paths) is 2:
+            for path in paths:
+                face_nparray, original_image = open_crop_and_resize_face(path)
+                faces.append(face_nparray)
+                relative_paths.append('.' + path)
+            embeddings = faces_to_embeddings(faces)
+            match_result = is_match(embeddings[0], embeddings[1])
+            return render_template('result.html',
+                                   match_result=match_result,
+                                   relative_paths=relative_paths)
     return redirect(url_for('reconhecimento_index'))
 
 
@@ -91,8 +85,10 @@ def renach_upload():
             return texto_extraido
     return redirect(url_for('renach_index'))
 
+
 def renach_extrai_textos(image):
     return 'Belo conteúdo extraído da renach'
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
