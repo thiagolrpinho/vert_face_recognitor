@@ -13,9 +13,13 @@
         <div class="ty-showcase">
           <div class="ty-showcase-content" style="text-align: center;">
             <h2>Reconhecimento Facial</h2>
-            <img src="../uploads/first_image.jpg" style="width: 200px; height: 200px; object-fit: contain;">
-            <img src="../uploads/second_image.jpg" style="width: 200px; height: 200px; object-fit: contain;">
-            <p class="ty-text-body", style="color: red;">As pessoas das fotos não são a mesma!</p>
+            <img src={{relative_paths[0]}} style="width: 200px; height: 200px; object-fit: contain;">
+            <img src={{relative_paths[1]}} style="width: 200px; height: 200px; object-fit: contain;">
+            {% if match_result %}
+              <p class="ty-text-body", style="color: green;">A pessoa das fotos é a mesma!</p>
+            {% else %}
+              <p class="ty-text-body", style="color: red;">As pessoas das fotos não são a mesma!</p>
+            {% endif %}
             <button onclick="window.history.back()">Clique para voltar</button>
           </div>
         </div>

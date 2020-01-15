@@ -15,19 +15,11 @@ app.config["CACHE_TYPE"] = "null"
 def index():
     return render_template('index.html', host=APP_IP, port=str(APP_PORT))
 
+
 @app.route('/reconhecimento_facial/')
 def reconhecimento_index():
     return render_template('reconhecimento_index.html')
 
-
-@app.route('/reconhecimento_facial/result')
-def reconhecimento_result(match_result, relative_paths):
-    if match_result:
-        return render_template('is_same.html',
-                               match_result=match_result,
-                               relative_paths=relative_paths)
-    else:
-        return render_template('not_same.html')
 
 @app.route('/reconhecimento_facial/upload', methods=['GET', 'POST'])
 def reconhecimento_upload():
@@ -64,8 +56,10 @@ def reconhecimento_upload():
                 faces.append(face_nparray)
                 relative_paths.append('.' + path)
             embeddings = faces_to_embeddings(faces)
-            return reconhecimento_result(is_match(embeddings[0],
-                                         embeddings[1]), relative_paths)
+            match_result = is_match(embeddings[0], embeddings[1])
+            return render_template('result.html',
+                                   match_result=match_result,
+                                   relative_paths=relative_paths)
     return redirect(url_for('reconhecimento_index'))
 
 
