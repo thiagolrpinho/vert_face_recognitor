@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, flash
+from flask import Flask, render_template, request, redirect,\
+    url_for, send_from_directory, flash
 import os
 from werkzeug.utils import secure_filename
 import sys
@@ -42,7 +43,7 @@ def reconhecimento_upload():
                 print('No selected file')
                 return redirect(request.url)
             if image and allowed_file(image.filename):
-                filename = image.filename
+                filename = secure_filename(image.filename)
                 path = os.path.join(UPLOAD_FOLDER, filename)
                 if os.path.isfile(path):
                     os.remove((path))
@@ -57,9 +58,9 @@ def reconhecimento_upload():
                 relative_paths.append('.' + path)
             embeddings = faces_to_embeddings(faces)
             match_result = is_match(embeddings[0], embeddings[1])
-            return render_template('result.html',
-                                   match_result=match_result,
-                                   relative_paths=relative_paths)
+            return render_template(
+                'result.html', match_result=match_result,
+                relative_paths=relative_paths)
     return redirect(url_for('reconhecimento_index'))
 
 
@@ -74,15 +75,16 @@ def renach_upload():
         if 'file' not in request.files:
             print('No file part')
             return redirect(request.url)
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        renach_image = request.files['file']
-        if renach_image.filename == '':
-            print('No selected file')
-            return redirect(request.url)
-        if renach_image and allowed_file(renach_image.filename):
-            texto_extraido = renach_extrai_textos(renach_image)
-            return texto_extraido
+        uploaded_files = request.files.getlist("file")
+        for pdf_file in uploaded_files:
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if pdf_file.filename == '':
+                print('No selected file')
+                return redirect(request.url)
+            if pdf_file and allowed_file(pdf_file.filename):
+                texto_extraido = renach_extrai_textos(pdf_file)
+                return texto_extraido
     return redirect(url_for('renach_index'))
 
 
