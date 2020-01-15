@@ -40,7 +40,7 @@ def cnh_ocr_master(input_pdf_name, export=False, path_test_output=None , img_lin
             'expire_date', 'first_renach_date']
         renach_dict = {}
         for i, key in enumerate(column_names):
-            if len(roi_text) > 1:
+            if len(roi_text[i]) > 1:
                 renach_dict[key] = roi_text[i]
             else:
                 renach_dict[key] = roi_text[i][0]

@@ -26,14 +26,14 @@
                         </tr>
                         {% for renach in extracted_elements %}
                         <tr>
-                            {% for value in renach.values() %}
+                            {% for key, value in renach.items() %}
                             <td>
-                                {% if isinstance(value, list)}
-                                  {% for text in value %}
-                                      {{text}}
-                                  {% endfor %}
+                                {% if key == "parents" %}
+                                    {% for text in value %}
+                                        {{text}}
+                                    {% endfor %}
                                 {% else %}
-                                  {{value}}
+                                    {{value}}
                                 {% endif %}
                             </td>
                             {% endfor %}
@@ -41,6 +41,7 @@
                         {% endfor %}
                     </table>
                     <a href={{path_to_download}}>Clique aqui para baixar a planilha</a>
+                    <br>
                     <button onclick="window.history.back()">Clique para voltar</button>
                 </div>
             </div>

@@ -7,6 +7,7 @@ from image_helpers import open_crop_and_resize_face
 from encoding_helpers import is_match, faces_to_embeddings
 from pipeline_geral import cnh_ocr_master
 import pandas as pd
+import time
 
 # Based on https://github.com/tylerfreckmann/cas-api
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -92,20 +93,22 @@ def renach_upload():
                 pdf_file.save(
                     UPLOAD_RENACH_FOLDER + secure_filename(pdf_file.filename))
                 extracted_elements.append(
-                    renach_extrai_textos(secure_filename(pdf_file.filename)))
+                    cnh_ocr_master(UPLOAD_RENACH_FOLDER + secure_filename(
+                        pdf_file.filename)))
         df_elements = pd.DataFrame(extracted_elements)
-        df_elements.to_excel(DOWNLOAD_FOLDER + "/renach_ocr.xlsx")
+        csv_name = "/renach_ocr_" + str(time.time()) + ".xlsx"
+        df_elements.to_excel(DOWNLOAD_FOLDER + csv_name)
         return render_template(
             'renach_result.html',
             extracted_elements=extracted_elements,
-            path_to_download=DOWNLOAD_FOLDER + "/renach_ocr.xlsx")
+            path_to_download=DOWNLOAD_FOLDER + csv_name)
     return redirect(url_for('renach_index'))
 
 
 def renach_extrai_textos(image):
     return {
         "name": "Fulano", "rg": "0909", "cpf": "099", "birth_date": "09/09/20",
-        "parents": ["Sua mae, seu pai"], "renach_number": "09090",
+        "parents": ["Sua mae, seu pai", "seu irmão"], "renach_number": "09090",
         "expire_date": "10/10/10", "first_renach_date": "08/08/08"}
 
 
@@ -147,6 +150,3 @@ if __name__ == '__main__':
         ASTORE = 'lenet'
         # ASTORE_LIB = 'casuser'
     app.run(debug=True, host=APP_IP, port=APP_PORT)
-
-
-
