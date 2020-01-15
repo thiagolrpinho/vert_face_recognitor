@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
+    <article>
+      <header>
+        <div class="ty-header-div" style="text-align: center;">
+          <h1 class="ty-title">Vert Analytics</h1>
+          <h2 class="ty-subtitle">Ninjas em ação</h2>
+        </div>
+      </header>
+      <section class="ty-content">
+        <div class="ty-showcase">
+          <div class="ty-showcase-content" style="text-align: center;">
+            <h2>Renach OCR</h2>
+            <table>
+              <tr>
+                <th>Nome</th>
+                <th>Documento de identificação</th>
+                <th>CPF</th>
+                <th>Data de Nascimento</th>
+                <th>Filiação</th>
+                <th>Número da Renach</th>
+                <th>Validade</th>
+                <th>Data da Primeira Habilitação</th>
+              </tr>
+              {% for renach in extracted_elements %}
+                <tr>
+                  {% for value in renach.values() %}
+                    <td>{{value}}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+              </table>
+            <button onclick="window.history.back()">Clique para voltar</button>
+          </div>
+        </div>
+      </section>
+    </article>
+  </div>
+{% endblock %}

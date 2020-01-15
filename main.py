@@ -76,20 +76,25 @@ def renach_upload():
             print('No file part')
             return redirect(request.url)
         uploaded_files = request.files.getlist("file")
+        extracted_elements = []
         for pdf_file in uploaded_files:
             # if user does not select file, browser also
             # submit an empty part without filename
             if pdf_file.filename == '':
                 print('No selected file')
                 return redirect(request.url)
-            if pdf_file and allowed_file(pdf_file.filename):
-                texto_extraido = renach_extrai_textos(pdf_file)
-                return texto_extraido
+            if pdf_file and is_pdf(pdf_file.filename):
+                extracted_elements.append(renach_extrai_textos(pdf_file))
+        return render_template(
+            'renach_result.html', extracted_elements=extracted_elements)
     return redirect(url_for('renach_index'))
 
 
 def renach_extrai_textos(image):
-    return 'Belo conteúdo extraído da renach'
+    return {
+        "name": "Fulano", "rg": "0909", "cpf": "099", "birth_date": "09/09/20",
+        "parents": ["Sua mae, seu pai"], "renach_number": "09090",
+        "expire_date": "10/10/10", "first_renach_date": "08/08/08"}
 
 
 @app.route('/uploads/<filename>')
@@ -100,6 +105,11 @@ def uploaded_file(filename):
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def is_pdf(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in 'pdf'
 
 
 if __name__ == '__main__':
