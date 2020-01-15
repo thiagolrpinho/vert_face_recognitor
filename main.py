@@ -12,6 +12,8 @@ import pandas as pd
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './uploads'
 DOWNLOAD_FOLDER = './downloads'
+UPLOAD_RENACH_FOLDER = UPLOAD_FOLDER + '/renach'
+
 app = Flask(__name__)
 app.secret_key = "TEU_PAI"
 app.config["CACHE_TYPE"] = "null"
@@ -87,7 +89,7 @@ def renach_upload():
                 print('No selected file')
                 return redirect(request.url)
             if pdf_file and is_pdf(pdf_file.filename):
-                pdf_file.save(secure_filename(pdf_file.filename))
+                pdf_file.save(UPLOAD_RENACH_FOLDER + secure_filename(pdf_file.filename))
                 extracted_elements.append(
                     renach_extrai_textos(secure_filename(pdf_file.filename)))
         df_elements = pd.DataFrame(extracted_elements)
