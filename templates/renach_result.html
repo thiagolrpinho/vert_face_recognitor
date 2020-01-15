@@ -28,9 +28,13 @@
                         <tr>
                             {% for value in renach.values() %}
                             <td>
-                                {% for text in value %}
-                                    {{text}}
-                                {% endfor %}
+                                {% if isinstance(value, list)}
+                                  {% for text in value %}
+                                      {{text}}
+                                  {% endfor %}
+                                {% else %}
+                                  {{value}}
+                                {% endif %}
                             </td>
                             {% endfor %}
                         </tr>

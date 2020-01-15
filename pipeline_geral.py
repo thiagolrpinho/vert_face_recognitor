@@ -33,14 +33,19 @@ def cnh_ocr_master(input_pdf_name, export=False, path_test_output=None , img_lin
         temp_draw, rec, bgr_temp_roi, bgr_temp_roi_otsu = cnh_roi_detection(img)
         #### Gerando OCR das regiões de interesse (ROIs)
         roi_text = ocr_text( rec , bgr_temp_roi, bgr_temp_roi_otsu, export, path_test_output , img_link)
+        
+        ### Criando um dicinário para a interface com o resto da aplicação
         column_names = [
             'name', 'rg', 'cpf', 'birth_date', 'parents', 'renach_number',
             'expire_date', 'first_renach_date']
         renach_dict = {}
         for i, key in enumerate(column_names):
-            renach_dict[key] = roi_text[i]
+            if len(roi_text) > 1:
+                renach_dict[key] = roi_text[i]
+            else:
+                renach_dict[key] = roi_text[i][0]
     return renach_dict
- 
+
 if __name__ == "__main__":   
     # construct the argument parser and parse the arguments
     ap = argparse.ArgumentParser()

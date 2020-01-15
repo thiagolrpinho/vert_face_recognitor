@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect,\
-    url_for, send_from_directory, flash
+    url_for, send_from_directory
 import os
 from werkzeug.utils import secure_filename
 import sys
@@ -89,7 +89,8 @@ def renach_upload():
                 print('No selected file')
                 return redirect(request.url)
             if pdf_file and is_pdf(pdf_file.filename):
-                pdf_file.save(UPLOAD_RENACH_FOLDER + secure_filename(pdf_file.filename))
+                pdf_file.save(
+                    UPLOAD_RENACH_FOLDER + secure_filename(pdf_file.filename))
                 extracted_elements.append(
                     renach_extrai_textos(secure_filename(pdf_file.filename)))
         df_elements = pd.DataFrame(extracted_elements)
@@ -103,9 +104,9 @@ def renach_upload():
 
 def renach_extrai_textos(image):
     return {
-        "name": ["Fulano"], "rg": ["0909"], "cpf": ["099"], "birth_date": ["09/09/20"],
-        "parents": ["Sua mae, seu pai"], "renach_number": ["09090"],
-        "expire_date": ["10/10/10"], "first_renach_date": ["08/08/08"]}
+        "name": "Fulano", "rg": "0909", "cpf": "099", "birth_date": "09/09/20",
+        "parents": ["Sua mae, seu pai"], "renach_number": "09090",
+        "expire_date": "10/10/10", "first_renach_date": "08/08/08"}
 
 
 @app.route('/uploads/<filename>')
