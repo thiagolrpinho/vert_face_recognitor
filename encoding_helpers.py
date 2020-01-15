@@ -82,7 +82,6 @@ def faces_to_embeddings(faces):
     ''' Receives an already treated array
         with images sized 224x224 and return
         their's respective embedding code '''
-    print(type(faces[0]))
     #  Converte em um array de samples
     samples = asarray(faces, 'float32')
     # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
@@ -91,7 +90,6 @@ def faces_to_embeddings(faces):
     model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
     # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
     embeddings = model.predict(samples)
-    print(type(embeddings[0]))
 
     return embeddings
 

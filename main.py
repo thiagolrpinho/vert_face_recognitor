@@ -13,7 +13,8 @@ import time
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './uploads'
 DOWNLOAD_FOLDER = './downloads'
-UPLOAD_RENACH_FOLDER = UPLOAD_FOLDER + '/renach'
+UPLOAD_RENACH_FOLDER = UPLOAD_FOLDER + '/renach/'
+UPLOAD_RECONHECIMENTO_FOLDER = UPLOAD_FOLDER + '/reconhecimento/'
 
 app = Flask(__name__)
 app.secret_key = "TEU_PAI"
@@ -50,11 +51,10 @@ def reconhecimento_upload():
                 return redirect(request.url)
             if image and allowed_file(image.filename):
                 filename = secure_filename(image.filename)
-                path = os.path.join(UPLOAD_FOLDER, filename)
+                path = os.path.join(UPLOAD_RECONHECIMENTO_FOLDER, filename)
                 if os.path.isfile(path):
                     os.remove((path))
                 image.save(path)
-                print(path)
                 paths.append(path)
 
         if len(paths) is 2:
@@ -65,7 +65,7 @@ def reconhecimento_upload():
             embeddings = faces_to_embeddings(faces)
             match_result = is_match(embeddings[0], embeddings[1])
             return render_template(
-                'result.html', match_result=match_result,
+                'reconhecimento_result.html', match_result=match_result,
                 relative_paths=relative_paths)
     return redirect(url_for('reconhecimento_index'))
 
@@ -112,9 +112,9 @@ def renach_extrai_textos(image):
         "expire_date": "10/10/10", "first_renach_date": "08/08/08"}
 
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+@app.route('/uploads/reconhecimento/<filename>')
+def uploaded_reconhecimento_file(filename):
+    return send_from_directory(UPLOAD_RECONHECIMENTO_FOLDER, filename)
 
 
 @app.route('/renach/downloads/<filename>')
