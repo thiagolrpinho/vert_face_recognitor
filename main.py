@@ -5,10 +5,13 @@ from werkzeug.utils import secure_filename
 import sys
 from image_helpers import open_crop_and_resize_face
 from encoding_helpers import is_match, faces_to_embeddings
+from pipeline_geral import cnh_ocr_master
+import pandas as pd
 
 # Based on https://github.com/tylerfreckmann/cas-api
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './uploads'
+DOWNLOAD_FOLDER = './downloads'
 app = Flask(__name__)
 app.secret_key = "TEU_PAI"
 app.config["CACHE_TYPE"] = "null"
@@ -84,22 +87,33 @@ def renach_upload():
                 print('No selected file')
                 return redirect(request.url)
             if pdf_file and is_pdf(pdf_file.filename):
-                extracted_elements.append(renach_extrai_textos(pdf_file))
+                pdf_file.save(secure_filename(pdf_file.filename))
+                extracted_elements.append(
+                    renach_extrai_textos(secure_filename(pdf_file.filename)))
+        df_elements = pd.DataFrame(extracted_elements)
+        df_elements.to_excel(DOWNLOAD_FOLDER + "/renach_ocr.xlsx")
         return render_template(
-            'renach_result.html', extracted_elements=extracted_elements)
+            'renach_result.html',
+            extracted_elements=extracted_elements,
+            path_to_download=DOWNLOAD_FOLDER + "/renach_ocr.xlsx")
     return redirect(url_for('renach_index'))
 
 
 def renach_extrai_textos(image):
     return {
-        "name": "Fulano", "rg": "0909", "cpf": "099", "birth_date": "09/09/20",
-        "parents": ["Sua mae, seu pai"], "renach_number": "09090",
-        "expire_date": "10/10/10", "first_renach_date": "08/08/08"}
+        "name": ["Fulano"], "rg": ["0909"], "cpf": ["099"], "birth_date": ["09/09/20"],
+        "parents": ["Sua mae, seu pai"], "renach_number": ["09090"],
+        "expire_date": ["10/10/10"], "first_renach_date": ["08/08/08"]}
 
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
+
+
+@app.route('/renach/downloads/<filename>')
+def download_file(filename):
+    return send_from_directory(DOWNLOAD_FOLDER, filename)
 
 
 def allowed_file(filename):
