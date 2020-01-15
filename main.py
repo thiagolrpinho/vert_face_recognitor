@@ -1,13 +1,21 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, flash
+from flask import Flask, render_template, request, redirect,\
+    url_for, send_from_directory
 import os
 from werkzeug.utils import secure_filename
 import sys
 from image_helpers import open_crop_and_resize_face
 from encoding_helpers import is_match, faces_to_embeddings
+from pipeline_geral import cnh_ocr_master
+import pandas as pd
+import time
 
 # Based on https://github.com/tylerfreckmann/cas-api
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './uploads'
+DOWNLOAD_FOLDER = './downloads'
+UPLOAD_RENACH_FOLDER = UPLOAD_FOLDER + '/renach/'
+UPLOAD_RECONHECIMENTO_FOLDER = UPLOAD_FOLDER + '/reconhecimento/'
+
 app = Flask(__name__)
 app.secret_key = "TEU_PAI"
 app.config["CACHE_TYPE"] = "null"
@@ -42,12 +50,11 @@ def reconhecimento_upload():
                 print('No selected file')
                 return redirect(request.url)
             if image and allowed_file(image.filename):
-                filename = image.filename
-                path = os.path.join(UPLOAD_FOLDER, filename)
+                filename = secure_filename(image.filename)
+                path = os.path.join(UPLOAD_RECONHECIMENTO_FOLDER, filename)
                 if os.path.isfile(path):
                     os.remove((path))
                 image.save(path)
-                print(path)
                 paths.append(path)
 
         if len(paths) is 2:
@@ -57,9 +64,9 @@ def reconhecimento_upload():
                 relative_paths.append('.' + path)
             embeddings = faces_to_embeddings(faces)
             match_result = is_match(embeddings[0], embeddings[1])
-            return render_template('result.html',
-                                   match_result=match_result,
-                                   relative_paths=relative_paths)
+            return render_template(
+                'reconhecimento_result.html', match_result=match_result,
+                relative_paths=relative_paths)
     return redirect(url_for('reconhecimento_index'))
 
 
@@ -74,30 +81,55 @@ def renach_upload():
         if 'file' not in request.files:
             print('No file part')
             return redirect(request.url)
-        # if user does not select file, browser also
-        # submit an empty part without filename
-        renach_image = request.files['file']
-        if renach_image.filename == '':
-            print('No selected file')
-            return redirect(request.url)
-        if renach_image and allowed_file(renach_image.filename):
-            texto_extraido = renach_extrai_textos(renach_image)
-            return texto_extraido
+        uploaded_files = request.files.getlist("file")
+        extracted_elements = []
+        for pdf_file in uploaded_files:
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if pdf_file.filename == '':
+                print('No selected file')
+                return redirect(request.url)
+            if pdf_file and is_pdf(pdf_file.filename):
+                pdf_file.save(
+                    UPLOAD_RENACH_FOLDER + secure_filename(pdf_file.filename))
+                extracted_elements.append(
+                    cnh_ocr_master(UPLOAD_RENACH_FOLDER + secure_filename(
+                        pdf_file.filename)))
+        df_elements = pd.DataFrame(extracted_elements)
+        csv_name = "/renach_ocr_" + str(time.time()) + ".xlsx"
+        df_elements.to_excel(DOWNLOAD_FOLDER + csv_name)
+        return render_template(
+            'renach_result.html',
+            extracted_elements=extracted_elements,
+            path_to_download=DOWNLOAD_FOLDER + csv_name)
     return redirect(url_for('renach_index'))
 
 
 def renach_extrai_textos(image):
-    return 'Belo conteúdo extraído da renach'
+    return {
+        "name": "Fulano", "rg": "0909", "cpf": "099", "birth_date": "09/09/20",
+        "parents": ["Sua mae, seu pai", "seu irmão"], "renach_number": "09090",
+        "expire_date": "10/10/10", "first_renach_date": "08/08/08"}
 
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+@app.route('/uploads/reconhecimento/<filename>')
+def uploaded_reconhecimento_file(filename):
+    return send_from_directory(UPLOAD_RECONHECIMENTO_FOLDER, filename)
+
+
+@app.route('/renach/downloads/<filename>')
+def download_file(filename):
+    return send_from_directory(DOWNLOAD_FOLDER, filename)
 
 
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def is_pdf(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in 'pdf'
 
 
 if __name__ == '__main__':
@@ -118,6 +150,3 @@ if __name__ == '__main__':
         ASTORE = 'lenet'
         # ASTORE_LIB = 'casuser'
     app.run(debug=True, host=APP_IP, port=APP_PORT)
-
-
-
