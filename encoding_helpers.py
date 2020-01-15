@@ -21,6 +21,7 @@ def get_embeddings( database_folder_name, crop=True ):
   faces = []
   filenames = []
   person_names = []
+  images = []
   # Itera sobre os caminhos das imagens
   for (i, imagePath) in enumerate(imagePaths):
     # Extrai a face da pessoa na imagem, caso haja
@@ -34,24 +35,24 @@ def get_embeddings( database_folder_name, crop=True ):
     
     if crop == True:
       # Se os rostos precisarem ser cortados das fotos, ele o faz.
-      face = open_crop_and_resize_face(imagePath)
-      faces.append(face)
+      face_nparray, original_image = open_crop_and_resize_face(imagePath)
     else:
       # Caso contrário ele somente abre e muda para o tamanho adequado.
-      face = pyplot.imread(imagePath)
-      face = cv2.resize(face, (224,224) )
-      faces.append(face)
+      face_nparray = pyplot.imread(imagePath)
+      face_nparray = cv2.resize(face_nparray, (224,224) )
 
+    faces.append(face_nparray)
+    images.append(original_image)
     #  Converte em um array de samples
-  samples = asarray(faces, 'float32')
-  # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
-  samples = preprocess_input(samples, version=2)
-  # Cria um modelo já treinado do VGGFace
-  model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
-  # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
-  embeddings = model.predict(samples)
+    samples = asarray(faces, 'float32')
+    # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
+    samples = preprocess_input(samples, version=2)
+    # Cria um modelo já treinado do VGGFace
+    model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
+    # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
+    embeddings = model.predict(samples)
 
-  return embeddings, person_names, filenames
+  return embeddings, person_names, filenames, images
 
 
 def is_match(known_embedding, candidate_embedding, thresh = 0.5):
@@ -66,12 +67,29 @@ def is_match(known_embedding, candidate_embedding, thresh = 0.5):
     print('>face is NOT a Match (%.3f > %.3f)' % (score, thresh))
     return False
 
-def store_codes_with_names( embbedings, person_names, filenames):
+def store_codes_with_names( embbedings, person_names, filenames, images):
   data = {}
-  for embbeding, person_name, filename in zip( embbedings, person_names, filenames ):
+  for embbeding, person_name, filename, image in zip( embbedings, person_names, filenames, images ):
     # Adiciona cada código e nome de arquivo para cada nome de pessoa
     if person_name in data:
-      data[person_name].append( [embbeding, filename] )
+      data[person_name].append( [embbeding, filename, image] )
     else: 
-      data[person_name] = [[embbeding, filename]]
+      data[person_name] = [[embbeding, filename, image]]
   return data
+
+
+def faces_to_embeddings(faces):
+    ''' Receives an already treated array
+        with images sized 224x224 and return
+        their's respective embedding code '''
+    #  Converte em um array de samples
+    samples = asarray(faces, 'float32')
+    # Faz os preprocessamentos necessários nas imagens para elas entrarem no modelo. Ex: Centraliza o rosto
+    samples = preprocess_input(samples, version=2)
+    # Cria um modelo já treinado do VGGFace
+    model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
+    # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
+    embeddings = model.predict(samples)
+
+    return embeddings
+

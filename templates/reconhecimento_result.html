@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class='p-0' style="background-image: linear-gradient(to top, #15292d, #b1d238); min-height: 100vh;" class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
+    <article>
+        <section class="pt-5 p-4 d-flex align-items-center justify-content-center">
+            <img src="/static/img/VERT_LOGO_RGB_POSITIVO.png" style='background-color: white; width: 25vw; height: calc(25vw / 2.93);'>
+        </section>
+        <section class="ty-content">
+        <div class="ty-showcase">
+          <div class="ty-showcase-content" style="text-align: center;">
+            <h2>Reconhecimento Facial</h2>
+            <img src={{relative_paths[0]}} style="width: 200px; height: 200px; object-fit: contain;">
+            <img src={{relative_paths[1]}} style="width: 200px; height: 200px; object-fit: contain;">
+            {% if match_result %}
+              <p class="ty-text-body", style="color: green;">A pessoa das fotos é a mesma!</p>
+            {% else %}
+              <p class="ty-text-body", style="color: red;">As pessoas das fotos não são a mesma!</p>
+            {% endif %}
+            <button onclick="window.history.back()">Clique para voltar</button>
+          </div>
+        </div>
+      </section>
+        <section>
+            <img src="/static/img/VERT_RODAPE.png" style="width: 100vw; height: calc(100vw/12.8); bottom: 0; position: fixed;">
+          </section>
+    </article>
+</div>
+{% endblock %}

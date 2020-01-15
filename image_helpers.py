@@ -1,16 +1,17 @@
 # Module created to develop auxiliary functions to deal with images
-# Modifiers: Thiago Luis, Rodrigo Lassarte
-# Last edit: 2019/10/29
 import cv2
 import face_recognition
 from matplotlib import pyplot
 from PIL import Image, ExifTags
 import numpy as np
+import datetime
+import os
+from imutils import paths
 
-def open_image_canon_position( image_name ):
+def open_image_canon_position( image_full_path ):
   ''' Open an image file and returns it the image in it at canon position'''
 
-  image = Image.open(image_name)
+  image = Image.open(image_full_path)
 
   for orientation in ExifTags.TAGS.keys() :
   # First we verify if there's the metadata needed to make know if the image is in canon position
@@ -80,17 +81,39 @@ def crop_face(image):
   return image
 
 
-def open_crop_and_resize_face(filename):
+def open_crop_and_resize_face(filePath):
 # load image from file
-  pixels = open_image_canon_position(filename)
+  original_image = open_image_canon_position(filePath)
   # Covert to RGB and also to an array that can be interpreted by openCV
-  image = cv2.cvtColor( np.array( pixels ) , cv2.COLOR_BGR2RGB)
+  image_nparray = cv2.cvtColor( np.array( original_image ) , cv2.COLOR_BGR2RGB)
 #  cv2.imshow("Image", image)
 #  cv2.waitKey(0)
-  face = crop_face(image)
+  face = crop_face(image_nparray)
   face = cv2.resize(face, (224, 224))
  
 
-  return face
+  return face, original_image
 
+def save_image(imagem_comparada, nome_arquivo_comparado, nome_arquivo_conhecido, nome_database):
+  'Receive image known and unknown to save them in folder for future comparison and presentation'
+  now = datetime.datetime.now()
+  # Primeiro nós encontramos o caminho para a primeira foto da pessoa sendo comparada na base de dados conhecida
+  imagePath = list(paths.list_images( "./database_conhecidos/" + nome_arquivo_conhecido[:-5] ))[0]
+  
+  # Depois criamos a pasta, caso ela não exista.
+  if os.makedirs("./database_" + nome_database):
+    print("[INFO]Diretório para a base de dados " + nome_database + " criada com sucesso.")
+  
+  # E então armazenamos a foto comparada seguida da original com suas respectivas denotações
+  try:
+    imagem_comparada.save("./database_" + nome_database + "/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_comparado" + ".jpg")
+  except: 
+    print("[INFO]Foto " + nome_arquivo_comparado[-5:] + " teve problemas ao ser armazenado.")
+
+
+  try:
+    imagem_conhecida = Image.open(imagePath)
+    imagem_conhecida.save("./database_" + nome_database + "/" + str(now.day) + "_" + str(now.hour) + "h" + str(now.minute) + 'm' + str(now.second) + "s_"  + nome_arquivo_comparado[:-5] + "_original" + ".jpg")
+  except:
+    print("[INFO]Foto " + nome_arquivo_comparado[-5:] + "_original teve problemas ao ser armzenado")
 

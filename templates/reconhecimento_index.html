@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="p-0" style="background-image: linear-gradient(to top, #15292d, #b1d238); min-height: 100vh;" class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
+    <article>
+      <section class="pt-5 p-4 d-flex align-items-center justify-content-center">
+        <img src="/static/img/VERT_LOGO_RGB_POSITIVO.png" style="background-color: white; width: 25vw; height: calc(25vw / 2.93);">
+      </section>
+      <section class="bg-transparent p-0 m-0 ty-content d-flex flex-column align-items-center justify-content-center">
+        <div class="w-50 text-light">
+          <h2 class="text-center font-weight-bold">Reconhecimento Facial</h2>
+          <p style="text-align-last: center;" class="text-justify ty-text-body">Computer vision analyzes and interprets what's in a picture or video. AI solutions from SAS use computer vision to help you accelerate intelligent automation with simple tools for image processing, image recognition, and object detection.</p>
+        </div>
+        <!-- DEMO -->
+        <div class="bg-transparent demo-container" id="image-demo">
+          <div class="ty-center ty-app">
+            <form class="d-flex flex-column align-items-center justify-content-center" action="/reconhecimento_facial/upload" enctype="multipart/form-data" method="post">
+              <div class="input-group mb-3">
+                <div class="custom-file">
+                  <input id="first_image" type="file" class="custom-file-input" name="first_image" accept="image/*">
+                  <label id="labelGroupFile01" class="custom-file-label" for="first_image">Escolha uma foto</label>
+                </div>
+              </div>
+              <div class="input-group mb-3">
+                <div class="custom-file">
+                  <input id="second_image" type="file" class="custom-file-input" name="second_image" accept="image/*">
+                  <label id="labelGroupFile02" class="custom-file-label" for="second_image">Escolha uma foto</label>
+                </div>
+              </div>
+              <input type="submit" class="btn btn-success">
+            </form>
+          </div>
+        </div>
+        <!-- END DEMO -->
+      </section>
+      <section>
+        <img src="/static/img/VERT_RODAPE.png" style="max-width: 100%; height: auto; bottom: 0;">
+      </section>
+    </article>
+  </div>
+
+  <script>
+    document.getElementById('first_image').addEventListener('change',function(){
+        //get the file name
+        var fullPath = this.value;
+        var fileName = "DESGRAÇA!!!"
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            fileName = fullPath.substring(startIndex);
+            if (fileName.indexOf('\\') === 0 || fileName.indexOf('/') === 0) {
+                fileName = fileName.substring(1);
+            }
+        }
+        //replace the "Choose a file" label
+        document.getElementById('labelGroupFile01').textContent = fileName
+    })
+    document.getElementById('second_image').addEventListener('change',function(){
+        //get the file name
+        var fullPath = this.value;
+        var fileName = "DESGRAÇA!!!"
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            fileName = fullPath.substring(startIndex);
+            if (fileName.indexOf('\\') === 0 || fileName.indexOf('/') === 0) {
+                fileName = fileName.substring(1);
+            }
+        }
+        //replace the "Choose a file" label
+        document.getElementById('labelGroupFile02').textContent = fileName
+    })
+  </script>
+{% endblock %}
