@@ -1,15 +1,13 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
+<div class='p-0' style="background-image: linear-gradient(to top, #15292d, #b1d238); min-height: 100vh;" class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
     <article>
-        <header>
-            <div class="ty-header-div" style="text-align: center;">
-                <h1 class="ty-title">Vert Analytics</h1>
-                <h2 class="ty-subtitle">Ninjas em ação</h2>
-            </div>
-        </header>
-        <section class="ty-content">
+        
+        <section class="pt-5 p-4 d-flex align-items-center justify-content-center">
+            <img src="/static/img/VERT_LOGO_RGB_POSITIVO.png" style='background-color: white; width: 25vw; height: calc(25vw / 2.93);'>
+        </section>
+        <section class="bg-transparent p-0 m-0 ty-content d-flex flex-column align-items-center justify-content-center">
             <div class="ty-showcase">
                 <div class="ty-showcase-content">
                     <h2 style="text-align: center;">Renach</h2>
@@ -21,17 +19,40 @@
                 </div>
             </div>
             <!-- DEMO -->
-            <div class="demo-container" id="image-demo">
+            <div class="bg-transparent demo-container" id="image-demo">
                 <div class="ty-center ty-app">
-                    <div class="try-it ty-app">Try it!</div>
-                    <form action="/renach/upload" enctype="multipart/form-data" method='post'>
-                        <input type="file" name="file" accept="application/pdf" multiple >
+                    <form action="/renach/upload" class ="d-flex flex-column align-items-center justify-content-center" enctype="multipart/form-data" method='post'>
+                        <div class="input-group mb-3">
+                            <div class="custom-file">
+                                <input id="first_image" type="file" class="custom-file-input" name="file" accept="application/pdf" multiple>
+                                <label id="labelGroupFile01" class="custom-file-label" for="first_image">Escolha uma foto</label>
+                            </div>
+                        </div>
                         <input type="submit">
                     </form>
                 </div>
             </div>
             <!-- END DEMO -->
         </section>
+        <section>
+            <img src="/static/img/VERT_RODAPE.png" style="width: 100vw; height: calc(100vw/12.8); bottom: 0; position: absolute;">
+        </section>
     </article>
 </div>
+<script>
+    document.getElementById('first_image').addEventListener('change',function(){
+        //get the file name
+        var fullPath = this.value;
+        var fileName = "DESGRAÇA!!!"
+        if (fullPath) {
+            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+            fileName = fullPath.substring(startIndex);
+            if (fileName.indexOf('\\') === 0 || fileName.indexOf('/') === 0) {
+                fileName = fileName.substring(1);
+            }
+        }
+        //replace the "Choose a file" label
+        document.getElementById('labelGroupFile01').textContent = fileName
+    })
+</script>
 {% endblock %}
