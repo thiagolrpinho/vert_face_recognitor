@@ -7,16 +7,9 @@ import pickle
 from framing_helper import filterOutSaltPepperNoise, findSignificantContour, \
                            trim, document_type
 from conversion_functions import convert_pdf_to_image
+from suport_models import models_list
 
-def background_remove(src_image):
-    #print("[INFO] Carregando modelo de detecção de bordas ...\n")
-    edgeDetector = cv2.ximgproc.createStructuredEdgeDetection(
-        "assets/model.yml")
-
-    #print("[INFO] Carregando modelo GrabCut ...\n")
-    model_grabcut = pickle.load(
-        open("assets/model_grabcut_pdf2imgRoberto.vrt", "rb"))
-
+def background_remove(src_image, edgeDetector, model_grabcut):
     #print("[INFO] Importando imagem de entrada ...\n")
 
     #print(
@@ -122,8 +115,9 @@ if __name__ == "__main__":
                     default="bg_removed_output.png",
                     help="path to output image")
     args = vars(ap.parse_args())
-
+    
+    edgeDetector, model_grabcut = models_list()[0:1]
     pdf_image = convert_pdf_to_image(args["input_image"])
-    bg_removed = background_remove(pdf_image)
+    bg_removed = background_remove(pdf_image, edgeDetector, model_grabcut)
 
     cv2.imwrite(args["output_image"], bg_removed)

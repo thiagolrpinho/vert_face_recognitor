@@ -10,14 +10,11 @@ import pytesseract
 from PIL import Image
 from framing_helper import show_img
 import argparse
-from text_OCR_detection_helper import dice_coef,dice_coef_loss,np_dice_coef,np_dice_coef_loss, \
-                                        retirar_linhas_horVert,img_to_text,retirando_chars_especiais, \
+from text_OCR_detection_helper import retirar_linhas_horVert,img_to_text,retirando_chars_especiais, \
                                         organizar_contornos,adaptive_gamma_correction
+from suport_models import models_list
 
-def cnh_roi_detection(bgr):
-
-    #### Carregando modelo para segmentação das áreas de texto da CNH
-    model = load_model("assets/modelo_segmentacao.h5", custom_objects={'dice_coef_loss': dice_coef_loss, "dice_coef": dice_coef})
+def cnh_roi_detection(bgr, model):
     
     #### Retirando linhas horizontais e verticais
     bgr_without_blanklines = retirar_linhas_horVert(image = cv2.resize(bgr, (int(2688*3/4), (int(1956*3/4)))))
@@ -146,7 +143,9 @@ if __name__ == "__main__":
                     help="path to OCR results")
     args = vars(ap.parse_args())	
     bgr = cv2.imread(args["input_image"])
-    temp_draw, rec, bgr_temp_roi, bgr_temp_roi_otsu = cnh_roi_detection(bgr)
+    
+    model = models_list()[2]
+    temp_draw, rec, bgr_temp_roi, bgr_temp_roi_otsu = cnh_roi_detection(bgr, model)
     
     #### Salvando a imagem com contorno
     _ = cv2.imwrite("CNH_text_roi_detected.png", temp_draw) 
