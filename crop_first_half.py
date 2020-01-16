@@ -6,6 +6,7 @@ import cv2
 import argparse
 from PIL import Image, ImageChops
 from framing_helper import trim
+from metricas_qualidade import metricas_qualidade 
 
 def crop_first_half(image):
     #print("[INFO] Importando imagem de entrada ...\n")
@@ -22,7 +23,7 @@ def crop_first_half(image):
     #print("[INFO] A razão largura:altura da imagem de entrada: {}:{} ~ {}\n".format( width,height,round(width/height,2)) )
 
     new_height = int( (60/85)*width )
-    new_height = int(new_height*1.03)
+    new_height = int(new_height*1.05)
     crop = image[ 0:new_height, 0:width ]
     ## Remove extra white space left from previus process and repeat crop rotine
     crop = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
@@ -35,7 +36,8 @@ def crop_first_half(image):
     #new_height = int(new_height*1.03)
     new_height = int(new_height*1.05)
     crop = crop[ 0:new_height, 0:width ]
-    return crop
+    ind_image_quality = metricas_qualidade(crop)
+    return crop, ind_image_quality
 
 if __name__ == "__main__":
     # construct the argument parser and parse the arguments
@@ -47,6 +49,6 @@ if __name__ == "__main__":
     args = vars(ap.parse_args())
 
     image = cv2.imread( args["input_image"] )
-    crop = crop_first_half(image)
+    crop, ind_image_quality = crop_first_half(image)
     cv2.imwrite( args["output_image"] , crop)
 

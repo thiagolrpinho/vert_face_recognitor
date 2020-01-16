@@ -82,7 +82,7 @@ def renach_upload():
             print('No file part')
             return redirect(request.url)
         uploaded_files = request.files.getlist("file")
-        extracted_elements = []
+        pdf_path_list = []
         for pdf_file in uploaded_files:
             # if user does not select file, browser also
             # submit an empty part without filename
@@ -92,9 +92,9 @@ def renach_upload():
             if pdf_file and is_pdf(pdf_file.filename):
                 pdf_file.save(
                     UPLOAD_RENACH_FOLDER + secure_filename(pdf_file.filename))
-                extracted_elements.append(
-                    cnh_ocr_master(UPLOAD_RENACH_FOLDER + secure_filename(
-                        pdf_file.filename)))
+                pdf_path_list.append(UPLOAD_RENACH_FOLDER + secure_filename(
+                        pdf_file.filename))
+        extracted_elements = cnh_ocr_master(pdf_path_list)
         df_elements = pd.DataFrame(extracted_elements)
         csv_name = "/renach_ocr_" + str(time.time()) + ".xlsx"
         df_elements.to_excel(DOWNLOAD_FOLDER + csv_name)
@@ -107,9 +107,11 @@ def renach_upload():
 
 def renach_extrai_textos(image):
     return {
+        "file": "local/arq.pdf",
         "name": "Fulano", "rg": "0909", "cpf": "099", "birth_date": "09/09/20",
         "parents": ["Sua mae, seu pai", "seu irmão"], "renach_number": "09090",
-        "expire_date": "10/10/10", "first_renach_date": "08/08/08"}
+        "expire_date": "10/10/10", "first_renach_date": "08/08/08",
+        "sharpness": "Alta", "clarity": "Baixa"}
 
 
 @app.route('/uploads/reconhecimento/<filename>')
@@ -134,8 +136,8 @@ def is_pdf(filename):
 
 if __name__ == '__main__':
     if len(sys.argv) == 6:
-    # TODO - user upload astore 
-    # To start app only want to use APP_IP, APP_PORT, UPLOAD_FOLDER params
+        # TODO - user upload astore
+        # To start app only want to use APP_IP, APP_PORT, UPLOAD_FOLDER params
         APP_IP = sys.argv[1]
         APP_PORT = int(sys.argv[2])
         UPLOAD_FOLDER = sys.argv[3]

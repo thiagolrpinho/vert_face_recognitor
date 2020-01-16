@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import textdistance
 
 def metricas_qualidade (img):
     '''
@@ -40,12 +39,3 @@ def metricas_qualidade (img):
 
     return ([snr_str, clar_str])
 
-def distancia_textual (real_list, pred_list):
-    norm_dist = []
-    dist = []
-    for real, pred in zip(real_list, pred_list):
-        norm_dist = textdistance.damerau_levenshtein.normalized_similarity(real, pred)
-        norm_dist = textdistance.damerau_levenshtein.distance(real, pred)
-    norm_dist_media = np.mean(norm_dist)
-    dist_total = np.sum(dist)
-    return norm_dist_media, dist_total
