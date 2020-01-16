@@ -9,6 +9,7 @@ from numpy import asarray
 from keras_vggface.vggface import VGGFace
 from keras_vggface.utils import preprocess_input
 from scipy.spatial.distance import cosine
+import keras
 
 
 def get_embeddings( database_folder_name, crop=True ):
@@ -90,6 +91,8 @@ def faces_to_embeddings(faces):
     model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')
     # Aplica o modelo sobre as imagens e retorna um vetor de códigos de incorporação
     embeddings = model.predict(samples)
+
+    keras.backend.clear_session()
 
     return embeddings
 
