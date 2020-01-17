@@ -1,31 +1,21 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class='p-0' style="background-image: linear-gradient(to top, #15292d, #b1d238); min-height: 100vh;" class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
-    <article>
-        <section class="pt-5 p-4 d-flex align-items-center justify-content-center">
-            <img src="/static/img/VERT_LOGO_RGB_POSITIVO.png" style='background-color: white; width: 25vw; height: calc(25vw / 2.93);'>
-        </section>
-        <section class="bg-transparent p-0 m-0 ty-content">
-        <div class=" ty-showcase">
-          <div class="ty-showcase-content" style="text-align: center; z-index: 2;">
-            <h2 style="color: white; font-weight: bold;">
-              Reconhecimento Facial
-            </h2>
-            <img src={{relative_paths[0]}} style="width: 200px; height: 200px; object-fit: contain; background-color: white;">
-            <img src={{relative_paths[1]}} style="width: 200px; height: 200px; object-fit: contain; background-color: white;">
-            {% if match_result %}
-              <p class="ty-text-body", style="color: white; font-weight: 500;">Ambas as fotos são da mesma pessoa.</p>
-            {% else %}
-              <p class="ty-text-body", style="color: white; font-weight: 500;">As fotos não são da mesma pessoa.</p>
-            {% endif %}
-            <a href="/reconhecimento_facial/" class="btn btn-warning">Voltar</a>
-          </div>
-        </div>
-      </section>
-        <section>
-            <img src="/static/img/VERT_RODAPE.png" style="width: 100vw; height: calc(100vw/12.8); bottom: 0; position: absolute;">
-          </section>
-    </article>
-</div>
+<section class="bg-transparent p-0 m-0 ty-content">
+  <div class=" ty-showcase">
+    <div class="ty-showcase-content" style="text-align: center; z-index: 2;">
+      <h2 style="color: white; font-weight: bold;">
+        Reconhecimento Facial
+      </h2>
+      <img src={{relative_paths[0]}} style="width: 200px; height: 200px; object-fit: contain; background-color: white;">
+      <img src={{relative_paths[1]}} style="width: 200px; height: 200px; object-fit: contain; background-color: white;">
+      {% if match_result %}
+        <p class="ty-text-body m-3", style="color: white; font-weight: 500;">Ambas as fotos são da mesma pessoa.</p>
+      {% else %}
+        <p class="ty-text-body m-3", style="color: white; font-weight: 500;">As fotos não são da mesma pessoa.</p>
+      {% endif %}
+      <a href="/reconhecimento_facial/" class="btn btn-warning">Voltar</a>
+    </div>
+  </div>
+</section>
 {% endblock %}

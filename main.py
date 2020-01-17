@@ -94,6 +94,7 @@ def renach_upload():
                     UPLOAD_RENACH_FOLDER + secure_filename(pdf_file.filename))
                 pdf_path_list.append(UPLOAD_RENACH_FOLDER + secure_filename(
                         pdf_file.filename))
+        # extracted_elements = cnh_ocr_master(pdf_path_list)
         extracted_elements = renach_extrai_textos(pdf_path_list)
         df_elements = pd.DataFrame(extracted_elements)
         csv_name = "/renach_ocr_" + str(time.time()) + ".xlsx"
