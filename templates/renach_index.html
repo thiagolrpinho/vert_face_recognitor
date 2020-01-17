@@ -3,35 +3,30 @@
 {% block content %}
 <div class='p-0' style="background-image: linear-gradient(to top, #15292d, #b1d238); min-height: 100vh;" class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
     <article>
-        
         <section class="pt-5 p-4 d-flex align-items-center justify-content-center">
             <img src="/static/img/VERT_LOGO_RGB_POSITIVO.png" style='background-color: white; width: 25vw; height: calc(25vw / 2.93);'>
         </section>
         <section class="bg-transparent p-0 m-0 ty-content d-flex flex-column align-items-center justify-content-center">
-            <div class="ty-showcase">
-                <div class="ty-showcase-content">
-                    <h2 style="text-align: center; color: #F8F9FA;">Renach</h2>
-                    <p class="ty-text-body">
-                        <center style="color: #F8F9FA;">
-                            Extração de documentos de maneira rápida e inteligente.
-                        </center>
-                    </p>
-                </div>
+            <div class="w-50 text-light">
+                <h2 class="text-center font-weight-bold">Renach</h2>
+                <p style="text-align-last: center;" class="text-justify ty-text-body">Extração de documentos de maneira rápida e inteligente.</p>
             </div>
             <!-- DEMO -->
             <div class="bg-transparent demo-container" id="image-demo">
                 <div class="ty-center ty-app d-flex flex-column align-items-center justify-content-center">
-                    <form action="/renach/upload" class ="d-flex flex-column align-items-center justify-content-center" enctype="multipart/form-data" method='post'>
+                    <form action="/renach/upload" class ="d-flex flex-column align-items-center justify-content-center" enctype="multipart/form-data" method='post' style='z-index: ;'>
                         <div class="input-group mb-3">
                             <div class="custom-file">
                                 <input id="first_image" type="file" class="custom-file-input" name="file" accept="application/pdf" multiple>
                                 <label id="labelGroupFile01" class="custom-file-label" for="first_image">Selecione os documentos</label>
                             </div>
                         </div>
-                        <input type="submit" class="btn btn-sucess" style="background-color: #28A745; color: white;" value="Enviar">
+                        <div class="d-flex">
+                            <input type="submit" class="btn btn-success m-1" value="Enviar">
+                            <button onclick="backButton('/')" class="btn btn-success m-1" style="margin-top: 1vw; border-radius: 0.25rem;">Voltar</button>
+                        </div>
                         <div id="loader" class="loader"></div>
                     </form>
-                    <button onclick="backButton('/')" class="btn-success" style="margin-top: 1vw; border-radius: 0.25rem;">Voltar</button>
                 </div>
             </div>
             <!-- END DEMO -->

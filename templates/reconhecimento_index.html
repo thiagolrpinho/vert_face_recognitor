@@ -27,10 +27,12 @@
                   <label id="labelGroupFile02" class="custom-file-label" for="second_image">Escolha uma foto</label>
                 </div>
               </div>
-              <input type="submit" class="btn btn-success" value="Enviar">
+              <div class="d-flex">
+                <input type="submit" class="btn btn-success m-1" value="Enviar">
+                <button onclick="backButton('/')" class="btn btn-success m-1">Voltar</button>
+              </div>
               <div id="loader" class="loader"></div>
             </form>
-            <button onclick="backButton('/')" class="btn-success" style="margin-top: 1vw; border-radius: 0.25rem;">Voltar</button>
           </div>
         </div>
         <!-- END DEMO -->
@@ -40,7 +42,5 @@
       </section>
     </article>
   </div>
-
-
   
 {% endblock %}
