@@ -1,24 +1,15 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class='p-0' style="background-image: linear-gradient(to top, #15292d, #b1d238); min-height: 100vh;" class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
-    <article>
-        <section class="pt-5 p-4 d-flex align-items-center justify-content-center">
-            <img src="/static/img/VERT_LOGO_RGB_POSITIVO.png" style='background-color: white; width: 25vw; height: calc(25vw / 2.93);'>
-        </section>
-        <section class="bg-transparent p-3 m-0 ty-content">
-            <!-- DEMO -->
-            <div class="bg-transparent demo-container" id="image-demo">
-                <div class="ty-center ty-app d-flex flex-column align-items-center justify-content-center">
-                    <input type="button" class='btn btn-success shadow mb-3 w-25' onclick="location.href='/reconhecimento_facial/';" value="Reconhecimento Facial" />
-                    <input type="button" class='btn btn-success shadow w-25'onclick="location.href='/renach/';" value="Renach" />
-                </div>
-            </div>
-            <!-- END DEMO -->
-        </section>
-        <section>
-            <img src="/static/img/VERT_RODAPE.png" style="width: 100vw; height: calc(100vw/12.8); bottom: 0; position: absolute;">
-        </section>
-    </article>
-</div>
+<section class="bg-transparent p-3 m-0 ty-content">
+    <div class="bg-transparent demo-container" id="image-demo">
+        <div class="ty-center ty-app d-flex flex-column align-items-center justify-content-center">
+            <input type="button" class='btn btn-success shadow mb-3 w-25' onclick="location.href='/reconhecimento_facial/';" value="Reconhecimento Facial" />
+            <input type="button" class='btn btn-success shadow w-25'onclick="location.href='/renach/';" value="Renach" />
+        </div>
+    </div>
+</section>
+<section>
+    <img src="/static/img/VERT_RODAPE.png" style="width: 100vw; height: calc(100vw/12.8); bottom: 0; position: absolute;">
+</section>
 {% endblock %}

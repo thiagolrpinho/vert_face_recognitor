@@ -1,54 +1,51 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="d-flex w-100 h-100 p-3 mx-auto flex-column ty-wrapper">
-    <article>
-        <header>
-            <div class="ty-header-div" style="text-align: center;">
-                <h1 class="ty-title">Vert Analytics</h1>
-                <h2 class="ty-subtitle">Ninjas em ação</h2>
-            </div>
-        </header>
-        <section class="ty-content">
-            <div class="ty-showcase">
-                <div class="ty-showcase-content" style="text-align: center;">
-                    <h2>Renach OCR</h2>
-                    <table>
-                        <tr>
-                            <th>Arquivo</th>
-                            <th>Nome</th>
-                            <th>Documento de identificação</th>
-                            <th>CPF</th>
-                            <th>Data de Nascimento</th>
-                            <th>Filiação</th>
-                            <th>Número da Renach</th>
-                            <th>Validade</th>
-                            <th>Data da Primeira Habilitação</th>
-                            <th>Nitidez</th>
-                            <th>Claridade</th>
-                        </tr>
-                        {% for renach in extracted_elements %}
+<section class="bg-transparent p-0 m-0 ty-content">
+    <div class="ty-showcase">
+        <div class="ty-showcase-content" style="text-align: center; z-index: 2;">
+            <h2 style="color: white; font-weight: bold;">
+                Renach OCR
+            </h2>
+            <table class="table table-striped table-hover mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" style="vertical-align: middle;">Arquivo</th>
+                        <th scope="col" style="vertical-align: middle;">Nome</th>
+                        <th scope="col" style="vertical-align: middle;">Documento de identificação</th>
+                        <th scope="col" style="vertical-align: middle;">CPF</th>
+                        <th scope="col" style="vertical-align: middle;">Data de Nascimento</th>
+                        <th scope="col" style="vertical-align: middle;">Filiação</th>
+                        <th scope="col" style="vertical-align: middle;">Número da Renach</th>
+                        <th scope="col" style="vertical-align: middle;">Validade</th>
+                        <th scope="col" style="vertical-align: middle;">Data da Primeira Habilitação</th>
+                        <th scope="col" style="vertical-align: middle;">Nitidez</th>
+                        <th scope="col" style="vertical-align: middle;">Claridade</th>
+                    </tr>
+                </thead>
+                <tbody class="table-light">
+                    {% for renach in extracted_elements %}
                         <tr>
                             {% for key, value in renach.items() %}
-                            <td>
-                                {% if key == "parents" %}
-                                    {% for text in value %}
-                                        {{text}}
-                                    {% endfor %}
-                                {% else %}
-                                    {{value}}
-                                {% endif %}
-                            </td>
+                                <td style="vertical-align: middle;">
+                                    {% if key == "parents" %}
+                                        {% for text in value %}
+                                            {{text}}
+                                        {% endfor %}
+                                    {% else %}
+                                        {{value}}
+                                    {% endif %}
+                                </td>
                             {% endfor %}
                         </tr>
-                        {% endfor %}
-                    </table>
-                    <a href={{path_to_download}}>Clique aqui para baixar a planilha</a>
-                    <br>
-                    <button onclick="window.history.back()">Clique para voltar</button>
-                </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="d-flex flex-column align-items-center justify-content-center">
+                <a href={{path_to_download}} class="btn btn-success m-1" style="z-index: 3;">Baixar Planilha</a>
+                <a href="/renach/" class="btn btn-warning m-1" style="z-index: 3;">Voltar</a>
             </div>
-        </section>
-    </article>
-</div>
+        </div>
+    </div>
+</section>
 {% endblock %}
