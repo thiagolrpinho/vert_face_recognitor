@@ -94,7 +94,7 @@ def renach_upload():
                     UPLOAD_RENACH_FOLDER + secure_filename(pdf_file.filename))
                 pdf_path_list.append(UPLOAD_RENACH_FOLDER + secure_filename(
                         pdf_file.filename))
-        extracted_elements = cnh_ocr_master(pdf_path_list)
+        extracted_elements = renach_extrai_textos(pdf_path_list)
         df_elements = pd.DataFrame(extracted_elements)
         csv_name = "/renach_ocr_" + str(time.time()) + ".xlsx"
         df_elements.to_excel(DOWNLOAD_FOLDER + csv_name)
@@ -105,13 +105,16 @@ def renach_upload():
     return redirect(url_for('renach_index'))
 
 
-def renach_extrai_textos(image):
-    return {
+def renach_extrai_textos(image_list):
+    list_of_dicts = []
+    for image in image_list:
+        list_of_dicts.append({
         "file": "local/arq.pdf",
         "name": "Fulano", "rg": "0909", "cpf": "099", "birth_date": "09/09/20",
         "parents": ["Sua mae, seu pai", "seu irmão"], "renach_number": "09090",
         "expire_date": "10/10/10", "first_renach_date": "08/08/08",
-        "sharpness": "Alta", "clarity": "Baixa"}
+        "sharpness": "Alta", "clarity": "Baixa"})
+    return list_of_dicts
 
 
 @app.route('/uploads/reconhecimento/<filename>')

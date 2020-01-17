@@ -28,9 +28,9 @@
                 </div>
               </div>
               <input type="submit" class="btn btn-success">
-              <button onclick="backButton()" class="btn-success" style="margin-top: 1vw; border-radius: 0.25rem;">Voltar</button>
               <div id="loader" class="loader"></div>
             </form>
+            <button onclick="backButton('/')" class="btn-success" style="margin-top: 1vw; border-radius: 0.25rem;">Voltar</button>
           </div>
         </div>
         <!-- END DEMO -->
@@ -71,8 +71,5 @@
         //replace the "Choose a file" label
         document.getElementById('labelGroupFile02').textContent = fileName
     })
-    function backButton() {
-      window.location.assign = "http://127.0.0.1:7050/";
-    }
   </script>
 {% endblock %}
