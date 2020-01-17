@@ -20,15 +20,15 @@
             </div>
             <!-- DEMO -->
             <div class="bg-transparent demo-container" id="image-demo">
-                <div class="ty-center ty-app">
+                <div class="ty-center ty-app d-flex flex-column align-items-center justify-content-center">
                     <form action="/renach/upload" class ="d-flex flex-column align-items-center justify-content-center" enctype="multipart/form-data" method='post'>
                         <div class="input-group mb-3">
                             <div class="custom-file">
                                 <input id="first_image" type="file" class="custom-file-input" name="file" accept="application/pdf" multiple>
-                                <label id="labelGroupFile01" class="custom-file-label" for="first_image">Escolha uma foto</label>
+                                <label id="labelGroupFile01" class="custom-file-label" for="first_image">Selecione os documentos</label>
                             </div>
                         </div>
-                        <input type="submit" class="btn btn-sucess" style="background-color: #28A745; color: white;">
+                        <input type="submit" class="btn btn-sucess" style="background-color: #28A745; color: white;" value="Enviar">
                         <div id="loader" class="loader"></div>
                     </form>
                     <button onclick="backButton('/')" class="btn-success" style="margin-top: 1vw; border-radius: 0.25rem;">Voltar</button>
@@ -45,7 +45,7 @@
     document.getElementById('first_image').addEventListener('change',function(){
         //get the file name
         var fullPath = this.value;
-        var fileName = "DESGRAÇA!!!"
+        var fileName = "arquivo_sem_nome"
         if (fullPath) {
             var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
             fileName = fullPath.substring(startIndex);

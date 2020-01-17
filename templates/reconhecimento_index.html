@@ -13,7 +13,7 @@
         </div>
         <!-- DEMO -->
         <div class="bg-transparent demo-container" id="image-demo">
-          <div class="ty-center ty-app">
+          <div class="ty-center ty-app d-flex flex-column align-items-center justify-content-center">
             <form class="d-flex flex-column align-items-center justify-content-center" action="/reconhecimento_facial/upload" enctype="multipart/form-data" method="post" style='z-index: ;'>
               <div class="input-group mb-3">
                 <div class="custom-file">
@@ -27,7 +27,7 @@
                   <label id="labelGroupFile02" class="custom-file-label" for="second_image">Escolha uma foto</label>
                 </div>
               </div>
-              <input type="submit" class="btn btn-success">
+              <input type="submit" class="btn btn-success" value="Enviar">
               <div id="loader" class="loader"></div>
             </form>
             <button onclick="backButton('/')" class="btn-success" style="margin-top: 1vw; border-radius: 0.25rem;">Voltar</button>
@@ -42,34 +42,5 @@
   </div>
 
 
-  <script>
-    document.getElementById('first_image').addEventListener('change',function(){
-        //get the file name
-        var fullPath = this.value;
-        var fileName = "DESGRAÇA!!!"
-        if (fullPath) {
-            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            fileName = fullPath.substring(startIndex);
-            if (fileName.indexOf('\\') === 0 || fileName.indexOf('/') === 0) {
-                fileName = fileName.substring(1);
-            }
-        }
-        //replace the "Choose a file" label
-        document.getElementById('labelGroupFile01').textContent = fileName
-    })
-    document.getElementById('second_image').addEventListener('change',function(){
-        //get the file name
-        var fullPath = this.value;
-        var fileName = "DESGRAÇA!!!"
-        if (fullPath) {
-            var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
-            fileName = fullPath.substring(startIndex);
-            if (fileName.indexOf('\\') === 0 || fileName.indexOf('/') === 0) {
-                fileName = fileName.substring(1);
-            }
-        }
-        //replace the "Choose a file" label
-        document.getElementById('labelGroupFile02').textContent = fileName
-    })
-  </script>
+  
 {% endblock %}
