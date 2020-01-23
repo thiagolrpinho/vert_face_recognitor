@@ -129,7 +129,6 @@ dependencies:
     - mtcnn==0.1.0
     - numpy==1.18.1
     - opencv-contrib-python==4.1.2.30
-    - opencv-python==4.1.2.30
     - openpyxl==3.0.3
     - opt-einsum==3.1.0
     - pdf2image==1.11.0
