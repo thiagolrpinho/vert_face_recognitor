@@ -110,6 +110,7 @@ dependencies:
     - astor==0.8.1
     - cycler==0.10.0
     - dlib==19.19.0
+    - et-xmlfile==1.0.1
     - face-recognition==1.2.3
     - face-recognition-models==0.3.0
     - gast==0.2.2
@@ -117,6 +118,7 @@ dependencies:
     - grpcio==1.26.0
     - h5py==2.10.0
     - imutils==0.5.3
+    - jdcal==1.4.1
     - keras==2.3.1
     - keras-applications==1.0.8
     - keras-preprocessing==1.1.0
@@ -128,6 +130,7 @@ dependencies:
     - numpy==1.18.1
     - opencv-contrib-python==4.1.2.30
     - opencv-python==4.1.2.30
+    - openpyxl==3.0.3
     - opt-einsum==3.1.0
     - pdf2image==1.11.0
     - protobuf==3.11.2
