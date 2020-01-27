@@ -1,5 +1,6 @@
 import ntpath
 import keras
+import pickle
 from conversion_functions import convert_pdf_to_image
 from background_remove import background_remove
 from orientation_correction import orientation_correction
@@ -8,18 +9,19 @@ from crop_first_half import crop_first_half
 from improve_img_quality import improve_img_quality
 from text_OCR_cnh import cnh_roi_detection, ocr_text
 from suport_models import models_list
+from similarity_validation import similarity_validation
 
 
-def create_dict(temp, roi_text, ind_image_quality):
+def create_dict(img_id, roi_text, ind_image_quality):
     # Criando um dicinário para a interface com o resto da aplicação
-    file_dict = {'file': temp.replace("./uploads/renach/", "")}
+    file_dict = {'file': img_id}
 
     roi_dict = {
         'name': '', 'rg': '', 'cpf': '', 'birth_date': '', 'parents': '',
         'renach_number': '', 'expire_date': '', 'first_renach_date': ''}
     if roi_text != []:
         for i, key in enumerate(roi_dict.keys()):
-            roi_len = len(roi_text[i]) 
+            roi_len = len(roi_text[i])
             if roi_len == 0:
                 roi_dict[key] = ''
             elif roi_len == 1:
@@ -42,8 +44,18 @@ def create_dict(temp, roi_text, ind_image_quality):
 
 def cnh_ocr_master(pdf_list, export=False, path_test_output=None):
 
+    # Definindo lista
     list_renach_dicts = []
+    # Carregando Modelo
     edgeDetector, model_grabcut, model = models_list()
+    # Carregando arquivos de banco de fotos
+    filehandler = open("./ids_banco_manual", "rb")
+    ids_banco_manual = pickle.load(filehandler)
+    filehandler.close()
+    filehandler = open("./info_banco_manual", "rb")
+    info_banco_manual = pickle.load(filehandler)
+    filehandler.close()
+
     for temp in pdf_list:
         # Carregando arquivo no formato pdf e convertendo para imagem
         pdf_image = convert_pdf_to_image(temp)
@@ -87,7 +99,13 @@ quantidade de informação esperada, output invalidado')
             if len(ind_image_quality) != 2:
                 ind_image_quality = []
 
-        renach_dict = create_dict(temp, roi_text, ind_image_quality)
+        img_id = temp.replace("./uploads/renach/", "")
+        id_predito = [img_id]
+        info_predito = [roi_text]
+        score_geral, _ = similarity_validation(
+            ids_banco_manual, info_banco_manual, id_predito, info_predito)
+        print(score_geral)
+        renach_dict = create_dict(img_id, roi_text, ind_image_quality)
         list_renach_dicts.append(renach_dict)
 
     keras.backend.clear_session()
