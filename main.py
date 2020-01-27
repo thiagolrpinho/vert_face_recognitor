@@ -110,11 +110,14 @@ def renach_extrai_textos(image_list):
     list_of_dicts = []
     for image in image_list:
         list_of_dicts.append({
-        "file": "local/arq.pdf",
-        "name": "Fulano", "rg": "0909", "cpf": "099", "birth_date": "09/09/20",
-        "parents": ["Sua mae, seu pai", "seu irmão"], "renach_number": "09090",
-        "expire_date": "10/10/10", "first_renach_date": "08/08/08",
-        "sharpness": "Alta", "clarity": "Baixa"})
+            "file": "local/arq.pdf",
+            "name": "Fulano", "rg": "0909", "cpf": "099",
+            "birth_date": "09/09/20",
+            "parents": ["Sua mae, seu pai", "seu irmão"],
+            "renach_number": "09090",
+            "expire_date": "10/10/10", "first_renach_date": "08/08/08",
+            "sharpness": "Alta", "clarity": "Baixa",
+            "score": "1.0", "result": "Aprovado"})
     return list_of_dicts
 
 
