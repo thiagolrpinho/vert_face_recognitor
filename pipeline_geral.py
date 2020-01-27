@@ -19,10 +19,13 @@ def create_dict(temp, roi_text, ind_image_quality):
         'renach_number': '', 'expire_date': '', 'first_renach_date': ''}
     if roi_text != []:
         for i, key in enumerate(roi_dict.keys()):
-            if len(roi_text[i]) > 1:
-                roi_dict[key] = roi_text[i]
-            else:
+            roi_len = len(roi_text[i]) 
+            if roi_len == 0:
+                roi_dict[key] = ''
+            elif roi_len == 1:
                 roi_dict[key] = roi_text[i][0]
+            else:
+                roi_dict[key] = roi_text[i]
 
     image_quality_dict = {'sharpness': '', 'clarity': ''}
     if ind_image_quality != []:
@@ -72,8 +75,7 @@ processo de tratamento - OCR não realizado')
                 bgr_temp_roi_otsu = cnh_roi_detection(img, model)
             # Gerando OCR das regiões de interesse (ROIs)
             roi_text = ocr_text(rec, bgr_temp_roi, bgr_temp_roi_otsu, export,
-                                path_test_output, ntpath.basename(
-                                    temp).replace(".pdf", ".png"))
+                                path_test_output, None)
             if len(roi_text) != 8:
                 roi_text = []
                 print("|====================================\
