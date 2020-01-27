@@ -48,7 +48,7 @@ def create_score_geral_dict(score_geral):
     score_geral_dict = {'score': '', 'result': ''}
     if score_geral != []:
         for i, key in enumerate(score_geral_dict.keys()):
-            score_geral_dict[key] = str(score_geral[i])
+            score_geral_dict[key] = str(score_geral[i]).replace(".", ",")
     return score_geral_dict
 
 
