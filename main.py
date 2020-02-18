@@ -14,6 +14,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './uploads'
 DOWNLOAD_FOLDER = './downloads'
 UPLOAD_RENACH_FOLDER = UPLOAD_FOLDER + '/renach/'
+UPLOAD_RENACH_CA_FOLDER = UPLOAD_FOLDER + '/renach_ca/'
 UPLOAD_RECONHECIMENTO_FOLDER = UPLOAD_FOLDER + '/reconhecimento/'
 
 app = Flask(__name__)
@@ -104,6 +105,15 @@ def renach_upload():
             extracted_elements=extracted_elements,
             path_to_download=DOWNLOAD_FOLDER + csv_name)
     return redirect(url_for('renach_index'))
+
+@app.route('/renach_ca/')
+def renach_ca_index():
+    return render_template('renach_ca_index.html')
+
+
+@app.route('/renach_ca/upload', methods=['GET', 'POST'])
+def renach_ca_upload():
+    return
 
 
 def renach_extrai_textos(image_list):
