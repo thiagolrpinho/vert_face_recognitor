@@ -35,7 +35,7 @@ more-itertools==8.1.0
 mtcnn==0.1.0
 numpy==1.18.1
 olefile==0.46
-opencv-contrib-python==4.1.2.30
+opencv-contrib-python==4.2.0.32
 openpyxl==3.0.3
 opt-einsum==3.1.0
 packaging==20.0
