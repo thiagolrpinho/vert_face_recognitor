@@ -44,7 +44,7 @@ pdf2image==1.11.0
 pep8-naming==0.9.1
 Pillow==7.0.0
 pluggy==0.12.0
-protobuf==3.11.2
+protobuf==3.18.3
 py==1.8.1
 pycodestyle==2.5.0
 pydocstyle==5.0.2
